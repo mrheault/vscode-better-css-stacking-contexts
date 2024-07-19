@@ -28,12 +28,6 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
-    "commands": [
-      {
-        "command": "extension.highlightStackingContexts",
-        "title": "Highlight Stacking Contexts"
-      }
-    ],
     "configuration": {
       "title": "Better Stacking Contexts",
       "properties": {
@@ -48,6 +42,16 @@
           "description": "Message text displayed as a decoration."
         }
       }
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "stackingContextsView",
+          "name": "Stacking Contexts",
+          "type": "tree",
+          "treeDataProviderId": "stackingContextsProvider"
+        }
+      ]
     }
   },
   "scripts": {
