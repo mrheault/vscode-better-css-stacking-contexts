@@ -1,5 +1,7 @@
-import postcss, { Node, Declaration } from 'postcss';
+import postcss, { Node, Declaration, Position } from 'postcss';
 import scssSyntax from 'postcss-scss';
+import { StackingContext } from '../types/StackingContext';
+import { Logger } from './logger';
 
 export const isDeclaration = (node: Node): node is Declaration =>
   node.type === 'decl';
@@ -103,24 +105,18 @@ function isStackingContextCreatingValue(node: Declaration): boolean {
 export async function findStackingContexts(
   content: string,
   isScss: boolean = false,
-): Promise<{ start: number; end: number }[]> {
-  const stackingContexts: {
-    start: number;
-    end: number;
-    selector: string;
-    property: string;
-    value: string;
-  }[] = [];
+): Promise<StackingContext[]> {
+  const stackingContexts: StackingContext[] = [];
   const syntax = isScss ? scssSyntax : undefined;
   const result = await postcss().process(content, { syntax: syntax });
 
   result.root?.walkRules((rule) => {
     rule.nodes?.forEach((node: any) => {
       if (isDeclaration(node) && isStackingContextCreatingValue(node)) {
-        if (node.source?.start && node.source.end) {
+        if (node.source?.start && node.source.end) {        
           stackingContexts.push({
-            start: node.source.start.offset,
-            end: node.source.end.offset,
+            start: node.source.start,
+            end: node.source.end,
             selector: rule.selector,
             property: node.prop,
             value: node.value,

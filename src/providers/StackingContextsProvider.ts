@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { Logger } from '../helpers/logger';
 import { StackingContextItem } from './StackingContextItem';
 
 export class StackingContextsProvider
@@ -25,11 +26,12 @@ export class StackingContextsProvider
       return Promise.resolve([]);
     } else {
       if (!this.documentUri) {
-        console.warn('Document URI is undefined in StackingContextsProvider');
+        Logger.warning('Document URI is undefined in StackingContextsProvider');
         return Promise.resolve([]);
       }
       return Promise.resolve(
         this.stackingContexts.map((context, index) => {
+          Logger.info('children context:' + JSON.stringify(context));
           const range = new vscode.Range(
             new vscode.Position(context.start, context.start),
             new vscode.Position(context.end, context.end),

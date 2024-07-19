@@ -1,15 +1,17 @@
 import lodash from 'lodash';
 import * as vscode from 'vscode';
 import Cache from 'vscode-cache';
+import { NavigateToPropertyCommand } from './commands/NavigateToProperty';
 import { findStackingContexts } from './helpers/findStackingContexts';
 import { Logger } from './helpers/logger';
 import { triggerUpdateDecorations } from './helpers/triggerUpdateDecorations';
 import { StackingContextsProvider } from './providers/StackingContextsProvider';
 
 export function activate(context: vscode.ExtensionContext) {
+  const navigateToPropertyCommand = new NavigateToPropertyCommand();
   const config = vscode.workspace.getConfiguration('betterStackingContexts');
   const stackingContextsProvider = new StackingContextsProvider([]);
-  const cache = new Cache(context, 'stackingContextsCache');
+  const cache = new Cache(context, 'stackingContextsCacheNew');
 
   vscode.window.registerTreeDataProvider(
     'stackingContextsView',
@@ -32,7 +34,6 @@ export function activate(context: vscode.ExtensionContext) {
         await cache.put(cacheKey, stackingContexts);
       }
       const documentUri = document.uri;
-
       stackingContextsProvider.refresh(stackingContexts, documentUri);
     }
   };
@@ -44,15 +45,25 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   if (vscode.window.activeTextEditor) {
-    debouncedUpdateTreeView(vscode.window.activeTextEditor.document);
-    debouncedTriggerUpdateDecorations(vscode.window.activeTextEditor.document);
+    try {
+      debouncedUpdateTreeView(vscode.window.activeTextEditor.document);
+      debouncedTriggerUpdateDecorations(
+        vscode.window.activeTextEditor.document,
+      );
+    } catch (e) {
+      Logger.error((e as Error).message);
+    }
   }
 
   vscode.window.onDidChangeActiveTextEditor(
     (editor) => {
       if (editor) {
-        debouncedUpdateTreeView(editor.document);
-        debouncedTriggerUpdateDecorations(editor.document);
+        try {
+          debouncedUpdateTreeView(editor.document);
+          debouncedTriggerUpdateDecorations(editor.document);
+        } catch (e) {
+          Logger.error((e as Error).message);
+        }
       }
     },
     null,
@@ -65,10 +76,14 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.window.activeTextEditor &&
         event.document === vscode.window.activeTextEditor.document
       ) {
-        debouncedUpdateTreeView(vscode.window.activeTextEditor.document);
-        debouncedTriggerUpdateDecorations(
-          vscode.window.activeTextEditor.document,
-        );
+        try {
+          debouncedUpdateTreeView(vscode.window.activeTextEditor.document);
+          debouncedTriggerUpdateDecorations(
+            vscode.window.activeTextEditor.document,
+          );
+        } catch (e) {
+          Logger.error((e as Error).message);
+        }
       }
     },
     null,
@@ -78,27 +93,8 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand(
       'stackingContexts.navigateToProperty',
-      async (documentUri: vscode.Uri, range: vscode.Range) => {
-        console.log('navigateToProperty called with:', documentUri, range);
-
-        let editor = vscode.window.visibleTextEditors.find(
-          (e) => e.document.uri.toString() === documentUri.toString(),
-        );
-
-        if (!editor) {
-          const document = await vscode.workspace.openTextDocument(documentUri);
-          editor = await vscode.window.showTextDocument(document);
-        } else {
-          await vscode.window.showTextDocument(
-            editor.document,
-            editor.viewColumn,
-          );
-        }
-
-        // Adjust the selection to focus on the start of the declaration
-        const startPosition = range.start;
-        editor.revealRange(range, vscode.TextEditorRevealType.InCenter);
-        editor.selection = new vscode.Selection(startPosition, startPosition);
+      async (documentUri: vscode.Uri, range) => {
+        await navigateToPropertyCommand.execute(documentUri, range);
       },
     ),
   );

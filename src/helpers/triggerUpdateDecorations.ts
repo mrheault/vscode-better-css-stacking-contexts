@@ -1,4 +1,5 @@
 import vscode from 'vscode';
+import { StackingContext } from '../types/StackingContext';
 import { findStackingContexts } from './findStackingContexts';
 import { isFileScss } from './isFileScss';
 
@@ -19,26 +20,28 @@ export async function triggerUpdateDecorations(
     'messageText',
     ' ⓘ This property creates a new stacking context',
   );
-  findStackingContexts(document.getText(), isScss).then((stackingContexts) => {
-    const decorationType = vscode.window.createTextEditorDecorationType({
-      after: {
-        color: new vscode.ThemeColor(decorationColor),
-        contentText: messageText,
-      },
-      isWholeLine: true,
-    });
+  findStackingContexts(document.getText(), isScss).then(
+    (stackingContexts: StackingContext[]) => {
+      const decorationType = vscode.window.createTextEditorDecorationType({
+        after: {
+          color: new vscode.ThemeColor(decorationColor),
+          contentText: messageText,
+        },
+        isWholeLine: true,
+      });
 
-    const ranges = stackingContexts.map(
-      (context) =>
-        new vscode.Range(
-          document.positionAt(context.start),
-          document.positionAt(context.end),
-        ),
-    );
+      const ranges = stackingContexts.map(
+        (context) =>
+          new vscode.Range(
+            document.positionAt(context.start.offset),
+            document.positionAt(context.end.offset),
+          ),
+      );
 
-    const activeEditor = vscode.window.activeTextEditor;
-    if (activeEditor && activeEditor.document.uri === document.uri) {
-      activeEditor.setDecorations(decorationType, ranges);
-    }
-  });
+      const activeEditor = vscode.window.activeTextEditor;
+      if (activeEditor && activeEditor.document.uri === document.uri) {
+        activeEditor.setDecorations(decorationType, ranges);
+      }
+    },
+  );
 }

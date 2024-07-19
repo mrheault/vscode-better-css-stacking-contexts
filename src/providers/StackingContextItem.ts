@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { Logger } from '../helpers/logger';
 
 export class StackingContextItem extends vscode.TreeItem {
   constructor(
@@ -20,7 +21,9 @@ export class StackingContextItem extends vscode.TreeItem {
         arguments: [this.documentUri, this.range],
       };
     } else {
-      console.warn('Document URI or Range is undefined in StackingContextItem');
+      Logger.warning(
+        'Document URI or Range is undefined in StackingContextItem',
+      );
     }
   }
 }
