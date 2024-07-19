@@ -81,8 +81,12 @@ function isStackingContextCreatingValue(node: Declaration): boolean {
     return value.split(',').some((prop) => stackingProperties.has(prop.trim()));
   }
 
-  if (node.prop === 'contain' && ['layout', 'paint', 'content'].includes(value))
+  if (
+    node.prop === 'contain' &&
+    ['layout', 'paint', 'content'].includes(value)
+  ) {
     return true;
+  }
 
   if (
     node.prop === 'display' &&
@@ -113,7 +117,7 @@ export async function findStackingContexts(
   result.root?.walkRules((rule) => {
     rule.nodes?.forEach((node: any) => {
       if (isDeclaration(node) && isStackingContextCreatingValue(node)) {
-        if (node.source?.start && node.source.end) {        
+        if (node.source?.start && node.source.end) {
           stackingContexts.push({
             start: node.source.start,
             end: node.source.end,

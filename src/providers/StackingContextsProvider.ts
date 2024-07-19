@@ -31,21 +31,18 @@ export class StackingContextsProvider
       }
       return Promise.resolve(
         this.stackingContexts.map((context, index) => {
-          Logger.info('children context:' + JSON.stringify(context));
-          const range = new vscode.Range(
-            new vscode.Position(context.start, context.start),
-            new vscode.Position(context.end, context.end),
-          );
           return new StackingContextItem(
             `Context ${index + 1}: ${context.selector}`,
             context,
-            context.property,
-            context.value,
             this.documentUri,
-            range,
           );
         }),
-      );
+      ).catch((error) => {
+        Logger.error(
+          `Error in getChildren method of StackingContextsProvider: ${error.message}`,
+        );
+        return []; // Return an empty array in case of error
+      });
     }
   }
 

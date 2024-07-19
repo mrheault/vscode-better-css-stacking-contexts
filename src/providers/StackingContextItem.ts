@@ -1,29 +1,29 @@
 import * as vscode from 'vscode';
 import { Logger } from '../helpers/logger';
+import { StackingContext } from '../types/StackingContext';
 
 export class StackingContextItem extends vscode.TreeItem {
   constructor(
     public readonly label: string,
-    public readonly context: any,
-    public readonly property?: string,
-    public readonly value?: string,
+    public readonly context: StackingContext,
     public readonly documentUri?: vscode.Uri,
-    public readonly range?: vscode.Range,
   ) {
     super(label, vscode.TreeItemCollapsibleState.None);
-    this.tooltip = `${this.label} - ${property}: ${value}`;
-    this.description = `${property}: ${value}`;
 
-    if (this.documentUri && this.range) {
+    if (!this.documentUri || !this.context) {
+      Logger.warning(
+        'Document URI or Context is undefined in StackingContextItem',
+      );
+      this.tooltip = `Error: Missing context or documentUri`;
+      this.description = `Error: Missing data`;
+    } else {
+      this.tooltip = `${this.label} - ${context.property}: ${context.value}`;
+      this.description = `${context.property}: ${context.value}`;
       this.command = {
         title: 'Go To CSS Property',
         command: 'stackingContexts.navigateToProperty',
-        arguments: [this.documentUri, this.range],
+        arguments: [this.documentUri, this.context],
       };
-    } else {
-      Logger.warning(
-        'Document URI or Range is undefined in StackingContextItem',
-      );
     }
   }
 }

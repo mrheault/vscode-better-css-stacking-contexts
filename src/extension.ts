@@ -24,17 +24,23 @@ export function activate(context: vscode.ExtensionContext) {
       (document.languageId === 'css' || document.languageId === 'scss')
     ) {
       const cacheKey = document.uri.toString();
-      let stackingContexts = cache.get(cacheKey);
-
-      if (!stackingContexts) {
-        stackingContexts = await findStackingContexts(
-          document.getText(),
-          document.languageId === 'scss',
-        );
-        await cache.put(cacheKey, stackingContexts);
+      let stackingContexts;
+      try {
+        stackingContexts = cache.get(cacheKey);
+        if (!stackingContexts) {
+          stackingContexts = await findStackingContexts(
+            document.getText(),
+            document.languageId === 'scss',
+          );
+          await cache.put(cacheKey, stackingContexts);
+        }
+      } catch (e) {
+        Logger.error(`Failed to access cache: ${(e as Error).message}`);
       }
-      const documentUri = document.uri;
-      stackingContextsProvider.refresh(stackingContexts, documentUri);
+      if (stackingContexts) {
+        const documentUri = document.uri;
+        stackingContextsProvider.refresh(stackingContexts, documentUri);
+      }
     }
   };
   const debouncedUpdateTreeView = lodash.debounce(updateTreeView, 200);
