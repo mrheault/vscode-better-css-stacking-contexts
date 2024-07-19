@@ -1,59 +1,16 @@
-import * as vscode from 'vscode';
 import lodash from 'lodash';
+import * as vscode from 'vscode';
+import Cache from 'vscode-cache';
 import { findStackingContexts } from './helpers/findStackingContexts';
+import { Logger } from './helpers/logger';
+import { triggerUpdateDecorations } from './helpers/triggerUpdateDecorations';
 import { StackingContextsProvider } from './providers/StackingContextsProvider';
-function isFileScss(filePath: string): boolean {
-  const extension = filePath.split('.').pop();
-  return extension === 'scss';
-}
-
-function triggerUpdateDecorations(
-  document: vscode.TextDocument,
-  config: vscode.WorkspaceConfiguration,
-) {
-  const isScss =
-    document.languageId === 'scss' || isFileScss(document.fileName);
-  if (!['css', 'scss'].includes(document.languageId)) {
-    return;
-  }
-  const decorationColor = config.get(
-    'decorationColor',
-    'editorInfo.foreground',
-  );
-  const messageText = config.get(
-    'messageText',
-    ' ⓘ This property creates a new stacking context',
-  );
-  findStackingContexts(document.getText(), isScss).then((stackingContexts) => {
-    const decorationType = vscode.window.createTextEditorDecorationType({
-      after: {
-        color: new vscode.ThemeColor(decorationColor),
-        contentText: messageText,
-      },
-      isWholeLine: true,
-    });
-
-    const ranges = stackingContexts.map(
-      (context) =>
-        new vscode.Range(
-          document.positionAt(context.start),
-          document.positionAt(context.end),
-        ),
-    );
-
-    const activeEditor = vscode.window.activeTextEditor;
-    if (activeEditor && activeEditor.document.uri === document.uri) {
-      activeEditor.setDecorations(decorationType, ranges);
-    }
-  });
-}
 
 export function activate(context: vscode.ExtensionContext) {
-  console.log(
-    '"vscode-better-stacking-contexts" is now active. Please open a CSS or SCSS file to see the extension in action.',
-  );
   const config = vscode.workspace.getConfiguration('betterStackingContexts');
   const stackingContextsProvider = new StackingContextsProvider([]);
+  const cache = new Cache(context, 'stackingContextsCache');
+
   vscode.window.registerTreeDataProvider(
     'stackingContextsView',
     stackingContextsProvider,
@@ -64,13 +21,22 @@ export function activate(context: vscode.ExtensionContext) {
       document &&
       (document.languageId === 'css' || document.languageId === 'scss')
     ) {
-      const stackingContexts = await findStackingContexts(
-        document.getText(),
-        document.languageId === 'scss',
-      );
-      stackingContextsProvider.refresh(stackingContexts);
+      const cacheKey = document.uri.toString();
+      let stackingContexts = cache.get(cacheKey);
+
+      if (!stackingContexts) {
+        stackingContexts = await findStackingContexts(
+          document.getText(),
+          document.languageId === 'scss',
+        );
+        await cache.put(cacheKey, stackingContexts);
+      }
+      const documentUri = document.uri;
+
+      stackingContextsProvider.refresh(stackingContexts, documentUri);
     }
   };
+  const debouncedUpdateTreeView = lodash.debounce(updateTreeView, 200);
 
   const debouncedTriggerUpdateDecorations = lodash.debounce(
     (document) => triggerUpdateDecorations(document, config),
@@ -78,16 +44,14 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   if (vscode.window.activeTextEditor) {
-    updateTreeView(vscode.window.activeTextEditor.document).catch(
-      console.error,
-    );
+    debouncedUpdateTreeView(vscode.window.activeTextEditor.document);
     debouncedTriggerUpdateDecorations(vscode.window.activeTextEditor.document);
   }
 
   vscode.window.onDidChangeActiveTextEditor(
     (editor) => {
       if (editor) {
-        updateTreeView(editor.document).catch(console.error);
+        debouncedUpdateTreeView(editor.document);
         debouncedTriggerUpdateDecorations(editor.document);
       }
     },
@@ -101,9 +65,7 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.window.activeTextEditor &&
         event.document === vscode.window.activeTextEditor.document
       ) {
-        updateTreeView(vscode.window.activeTextEditor.document).catch(
-          console.error,
-        );
+        debouncedUpdateTreeView(vscode.window.activeTextEditor.document);
         debouncedTriggerUpdateDecorations(
           vscode.window.activeTextEditor.document,
         );
@@ -111,6 +73,37 @@ export function activate(context: vscode.ExtensionContext) {
     },
     null,
     context.subscriptions,
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      'stackingContexts.navigateToProperty',
+      async (documentUri: vscode.Uri, range: vscode.Range) => {
+        console.log('navigateToProperty called with:', documentUri, range);
+
+        let editor = vscode.window.visibleTextEditors.find(
+          (e) => e.document.uri.toString() === documentUri.toString(),
+        );
+
+        if (!editor) {
+          const document = await vscode.workspace.openTextDocument(documentUri);
+          editor = await vscode.window.showTextDocument(document);
+        } else {
+          await vscode.window.showTextDocument(
+            editor.document,
+            editor.viewColumn,
+          );
+        }
+
+        // Adjust the selection to focus on the start of the declaration
+        const startPosition = range.start;
+        editor.revealRange(range, vscode.TextEditorRevealType.InCenter);
+        editor.selection = new vscode.Selection(startPosition, startPosition);
+      },
+    ),
+  );
+  Logger.info(
+    'vscode-better-stacking-contexts is now active. Please open a CSS or SCSS file to see the extension in action.',
   );
 }
 
