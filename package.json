@@ -33,7 +33,22 @@
         "command": "extension.highlightStackingContexts",
         "title": "Highlight Stacking Contexts"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Better Stacking Contexts",
+      "properties": {
+        "betterStackingContexts.decorationColor": {
+          "type": "string",
+          "default": "editorInfo.foreground",
+          "description": "Color of the decoration used to highlight stacking contexts."
+        },
+        "betterStackingContexts.messageText": {
+          "type": "string",
+          "default": " ⓘ This property creates a new stacking context",
+          "description": "Message text displayed as a decoration."
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run package",
@@ -50,6 +65,8 @@
     "test": "vscode-test"
   },
   "devDependencies": {
+    "@types/lodash": "^4.17.7",
+    "@types/lodash.debounce": "^4.0.9",
     "@types/mocha": "^10.0.7",
     "@types/node": "20.x",
     "@types/vscode": "^1.91.0",
@@ -66,6 +83,7 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "lodash": "^4.17.21",
     "lodash.debounce": "^4.0.8"
   }
 }
