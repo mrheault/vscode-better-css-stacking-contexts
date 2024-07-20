@@ -18,6 +18,33 @@ export function activate(context: vscode.ExtensionContext) {
     stackingContextsProvider,
   );
 
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      'stackingContexts.navigateToProperty',
+      async (documentUri: vscode.Uri, range) => {
+        await navigateToPropertyCommand.execute(documentUri, range);
+      },
+    ),
+    vscode.workspace.onDidChangeConfiguration((e) => {
+      if (
+        e.affectsConfiguration('betterStackingContexts.decorationColor') ||
+        e.affectsConfiguration('betterStackingContexts.messageText')
+      ) {
+        if (vscode.window.activeTextEditor) {
+          const document = vscode.window.activeTextEditor.document;
+          const config = vscode.workspace.getConfiguration();
+          triggerUpdateDecorations(document, config)
+            .then(() => {
+              Logger.info('Decorations updated successfully');
+            })
+            .catch((error) => {
+              Logger.error(`Failed to update decorations: ${error.message}`);
+            });
+        }
+      }
+    }),
+  );
+
   const updateTreeView = async (document?: vscode.TextDocument) => {
     if (
       document &&
@@ -94,30 +121,6 @@ export function activate(context: vscode.ExtensionContext) {
     },
     null,
     context.subscriptions,
-  );
-
-  context.subscriptions.push(
-    vscode.commands.registerCommand(
-      'stackingContexts.navigateToProperty',
-      async (documentUri: vscode.Uri, range) => {
-        Logger.info('navigateToPropertyCommand');
-        await navigateToPropertyCommand.execute(documentUri, range);
-      },
-    ),
-    vscode.workspace.onDidChangeConfiguration((e) => {
-      if (
-        e.affectsConfiguration('betterStackingContexts.decorationColor') ||
-        e.affectsConfiguration('betterStackingContexts.messageText')
-      ) {
-        vscode.window.visibleTextEditors.forEach((editor) => {
-          const document = editor.document;
-          const config = vscode.workspace.getConfiguration();
-          triggerUpdateDecorations(document, config).catch((error) => {
-            Logger.error(error.message);
-          });
-        });
-      }
-    }),
   );
   Logger.info(
     'vscode-better-stacking-contexts is now active. Please open a CSS or SCSS file to see the extension in action.',

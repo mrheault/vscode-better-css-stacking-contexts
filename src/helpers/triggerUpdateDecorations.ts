@@ -2,6 +2,7 @@ import vscode from 'vscode';
 import { StackingContext } from '../types/StackingContext';
 import { findStackingContexts } from './findStackingContexts';
 import { isFileScss } from './isFileScss';
+import { Logger } from './logger'; // Ensure you have imported Logger correctly
 
 export async function triggerUpdateDecorations(
   document: vscode.TextDocument,
@@ -20,28 +21,33 @@ export async function triggerUpdateDecorations(
     'messageText',
     ' 🤐 This property creates a new stacking context',
   );
-  findStackingContexts(document.getText(), isScss).then(
-    (stackingContexts: StackingContext[]) => {
-      const decorationType = vscode.window.createTextEditorDecorationType({
-        after: {
-          color: new vscode.ThemeColor(decorationColor),
-          contentText: messageText,
-        },
-        isWholeLine: true,
-      });
 
-      const ranges = stackingContexts.map(
-        (context) =>
-          new vscode.Range(
-            document.positionAt(context.start.offset),
-            document.positionAt(context.end.offset),
-          ),
-      );
+  try {
+    const stackingContexts: StackingContext[] = await findStackingContexts(
+      document.getText(),
+      isScss,
+    );
+    const decorationType = vscode.window.createTextEditorDecorationType({
+      after: {
+        color: new vscode.ThemeColor(decorationColor),
+        contentText: messageText,
+      },
+      isWholeLine: true,
+    });
 
-      const activeEditor = vscode.window.activeTextEditor;
-      if (activeEditor && activeEditor.document.uri === document.uri) {
-        activeEditor.setDecorations(decorationType, ranges);
-      }
-    },
-  );
+    const ranges = stackingContexts.map(
+      (context) =>
+        new vscode.Range(
+          document.positionAt(context.start.offset),
+          document.positionAt(context.end.offset),
+        ),
+    );
+
+    const activeEditor = vscode.window.activeTextEditor;
+    if (activeEditor && activeEditor.document.uri === document.uri) {
+      activeEditor.setDecorations(decorationType, ranges);
+    }
+  } catch (error) {
+    Logger.error(`Failed to update decorations: ${error}`);
+  }
 }

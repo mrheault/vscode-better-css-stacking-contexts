@@ -47,7 +47,13 @@ const nonNoneValues = new Set([
 function isStackingContextCreatingValue(node: Declaration): boolean {
   const value = node.value.trim().toLowerCase();
   const propValueCombo = `${node.prop}: ${value}`;
-
+  // Check for individual transform properties without specific values
+  if (
+    ['rotate', 'translate', 'scale'].includes(node.prop) &&
+    value !== 'none'
+  ) {
+    return true;
+  }
   if (node.prop === 'opacity' && parseFloat(value) < 1) {
     return true;
   }
