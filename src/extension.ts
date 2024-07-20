@@ -9,7 +9,6 @@ import { StackingContextsProvider } from './providers/StackingContextsProvider';
 
 export function activate(context: vscode.ExtensionContext) {
   const navigateToPropertyCommand = new NavigateToPropertyCommand();
-  const config = vscode.workspace.getConfiguration('betterStackingContexts');
   const stackingContextsProvider = new StackingContextsProvider([]);
   const cache = new Cache(context, 'stackingContextsCacheNew');
 
@@ -32,8 +31,7 @@ export function activate(context: vscode.ExtensionContext) {
       ) {
         if (vscode.window.activeTextEditor) {
           const document = vscode.window.activeTextEditor.document;
-          const config = vscode.workspace.getConfiguration();
-          triggerUpdateDecorations(document, config)
+          triggerUpdateDecorations(document)
             .then(() => {
               Logger.info('Decorations updated successfully');
             })
@@ -73,7 +71,7 @@ export function activate(context: vscode.ExtensionContext) {
   const debouncedUpdateTreeView = lodash.debounce(updateTreeView, 200);
 
   const debouncedTriggerUpdateDecorations = lodash.debounce(
-    (document) => triggerUpdateDecorations(document, config),
+    (document) => triggerUpdateDecorations(document),
     200,
   );
 

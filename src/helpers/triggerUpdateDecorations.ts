@@ -4,15 +4,14 @@ import { findStackingContexts } from './findStackingContexts';
 import { isFileScss } from './isFileScss';
 import { Logger } from './logger'; // Ensure you have imported Logger correctly
 
-export async function triggerUpdateDecorations(
-  document: vscode.TextDocument,
-  config: vscode.WorkspaceConfiguration,
-) {
+export async function triggerUpdateDecorations(document: vscode.TextDocument) {
   const isScss =
     document.languageId === 'scss' || isFileScss(document.fileName);
   if (!['css', 'scss'].includes(document.languageId)) {
     return;
   }
+  const config = vscode.workspace.getConfiguration('betterStackingContexts');
+
   const decorationColor = config.get(
     'decorationColor',
     'editorInfo.foreground',
