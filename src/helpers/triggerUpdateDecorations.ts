@@ -18,7 +18,7 @@ export async function triggerUpdateDecorations(
   );
   const messageText = config.get(
     'messageText',
-    ' ⓘ This property creates a new stacking context',
+    ' 🤐 This property creates a new stacking context',
   );
   findStackingContexts(document.getText(), isScss).then(
     (stackingContexts: StackingContext[]) => {

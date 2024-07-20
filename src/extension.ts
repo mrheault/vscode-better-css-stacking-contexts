@@ -104,6 +104,22 @@ export function activate(context: vscode.ExtensionContext) {
       },
     ),
   );
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeConfiguration((e) => {
+      if (
+        e.affectsConfiguration('decorationColor') ||
+        e.affectsConfiguration('messageText')
+      ) {
+        vscode.window.visibleTextEditors.forEach((editor) => {
+          const document = editor.document;
+          const config = vscode.workspace.getConfiguration();
+          triggerUpdateDecorations(document, config).catch((error) => {
+            Logger.error(error.message);
+          });
+        });
+      }
+    }),
+  );
   Logger.info(
     'vscode-better-stacking-contexts is now active. Please open a CSS or SCSS file to see the extension in action.',
   );

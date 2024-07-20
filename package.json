@@ -38,7 +38,7 @@
         },
         "betterStackingContexts.messageText": {
           "type": "string",
-          "default": " ⓘ This property creates a new stacking context",
+          "default": " 🤐 This property creates a new stacking context",
           "description": "Message text displayed as a decoration."
         }
       }
