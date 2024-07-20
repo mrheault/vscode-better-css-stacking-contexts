@@ -18,36 +18,13 @@ export class NavigateToPropertyCommand {
           editor.viewColumn,
         );
       }
-
-      const startLine = context.start.line;
-      const startCharacter = context.start.column;
-      const endLine = context.end.line;
-      const endCharacter = context.end.column;
-
-      const startPosition = new vscode.Position(
-        Math.max(0, Math.min(startLine, editor.document.lineCount - 1)),
-        Math.max(
-          0,
-          Math.min(
-            startCharacter,
-            editor.document.lineAt(startLine).text.length,
-          ),
-        ),
-      );
-      const endPosition = new vscode.Position(
-        Math.max(0, Math.min(endLine, editor.document.lineCount - 1)),
-        Math.max(
-          0,
-          Math.min(endCharacter, editor.document.lineAt(endLine).text.length),
-        ),
+      const ranges = new vscode.Range(
+        editor.document.positionAt(context.start.offset),
+        editor.document.positionAt(context.end.offset),
       );
 
-      editor.selection = new vscode.Selection(startPosition, startPosition);
-      editor.revealRange(
-        new vscode.Range(startPosition, endPosition),
-        vscode.TextEditorRevealType.AtTop,
-      );
-      editor.selection = new vscode.Selection(startPosition, startPosition);
+      editor.revealRange(ranges, vscode.TextEditorRevealType.InCenter);
+      editor.selection = new vscode.Selection(ranges.start, ranges.start);
     } catch (e) {
       Logger.error(`Failed to navigate to property: ${(e as Error).message}`);
       vscode.window.showErrorMessage('Failed to navigate to the CSS property.');

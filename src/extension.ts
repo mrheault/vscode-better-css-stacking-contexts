@@ -100,15 +100,14 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand(
       'stackingContexts.navigateToProperty',
       async (documentUri: vscode.Uri, range) => {
+        Logger.info('navigateToPropertyCommand');
         await navigateToPropertyCommand.execute(documentUri, range);
       },
     ),
-  );
-  context.subscriptions.push(
     vscode.workspace.onDidChangeConfiguration((e) => {
       if (
-        e.affectsConfiguration('decorationColor') ||
-        e.affectsConfiguration('messageText')
+        e.affectsConfiguration('betterStackingContexts.decorationColor') ||
+        e.affectsConfiguration('betterStackingContexts.messageText')
       ) {
         vscode.window.visibleTextEditors.forEach((editor) => {
           const document = editor.document;
