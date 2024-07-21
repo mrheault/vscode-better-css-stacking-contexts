@@ -4,6 +4,7 @@
   "description": "Highlights CSS stacking contexts and ineffective z-index declarations in VS Code.",
   "author": "Mike Rheault",
   "publisher": "mikerheault",
+  "icon": "images/better-stacking-contexts-icon.png",
   "license": "MIT",
   "repository": {
     "type": "git",
