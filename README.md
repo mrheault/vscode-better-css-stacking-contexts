@@ -11,12 +11,23 @@ Better CSS Stacking Contexts is a VSCode extension designed to simplify the proc
 * Tree View: Displays a tree view of your stacking context which is navigable to each property.
 
 ## Screenshots
+<figure>
 <picture>
-<source srcset="https://raw.githubusercontent.com/mrheault/vscode-better-css-stacking-contexts/main/images/treeview-dark.gif" media="(prefers-color-scheme: dark)" />
+<source srcset="https://raw.githubusercontent.com/mrheault/vscode-better-css-stacking-contexts/main/images/Treeview-dark.gif" media="(prefers-color-scheme: dark)" />
 <source srcset="https://raw.githubusercontent.com/mrheault/vscode-better-css-stacking-contexts/main/images/treeview-light.gif" media="(prefers-color-scheme: light)" />
 <img alt="Screenshot" src="https://raw.githubusercontent.com/mrheault/vscode-better-css-stacking-contexts/main/images/treeview-light.gif" />
 </picture>
+  <figcaption>Treeview - Navigation to property</figcaption>
+</figure>
 
+<figure>
+<picture>
+<source srcset="https://raw.githubusercontent.com/mrheault/vscode-better-css-stacking-contexts/main/images/quickfix-dark.gif" media="(prefers-color-scheme: dark)" />
+<source srcset="https://raw.githubusercontent.com/mrheault/vscode-better-css-stacking-contexts/main/images/quickfix-light.gif" media="(prefers-color-scheme: light)" />
+<img alt="Screenshot" src="https://raw.githubusercontent.com/mrheault/vscode-better-css-stacking-contexts/main/images/quickfix-light.gif" />
+</picture>
+  <figcaption>Quickfix - ineffective z-index</figcaption>
+</figure>
 ## Extension Settings
 
 This extension contributes the following settings:
