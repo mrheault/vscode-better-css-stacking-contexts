@@ -22,18 +22,16 @@ This extension contributes the following settings:
 Once installed, the extension will automatically start analyzing your CSS/SCSS files. Look for highlighted regions and hover over z-index declarations to see detailed information and available quick fixes.
 
 ## Contributing
-We welcome contributions! Please see our CONTRIBUTING.md file for details on how to get started.
+[We welcome contributions!](https://github.com/mrheault/vscode-better-css-stacking-contexts/pulls)
 
 ## License
-This project is licensed under the MIT License - see the LICENSE.md file for details.
+This project is licensed under the MIT License.
 
 ## Support
-If you encounter any issues or have feature requests, please file an issue on our GitHub repository.
+If you encounter any issues or have feature requests, please [file an issue](https://github.com/mrheault/vscode-better-css-stacking-contexts/issues) on our GitHub repository.
 
 ## Release Notes
 
-### 1.0.0
-
-Initial release.
+Change log can be found [here](https://github.com/mrheault/vscode-better-css-stacking-contexts/blob/main/CHANGELOG.md)
 
 
