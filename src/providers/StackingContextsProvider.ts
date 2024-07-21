@@ -3,6 +3,9 @@ import { Logger } from '../helpers/logger';
 import { StackingContext } from '../types/StackingContext';
 import { StackingContextItem } from './StackingContextItem';
 
+/**
+ * Provider for Stacking Contexts tree view
+ */
 export class StackingContextsProvider
   implements vscode.TreeDataProvider<StackingContextItem>
 {
@@ -18,10 +21,18 @@ export class StackingContextsProvider
     private documentUri?: vscode.Uri,
   ) {}
 
+  /**
+   * Get the tree item
+   * @param element
+   */
   getTreeItem(element: StackingContextItem): vscode.TreeItem {
     return element;
   }
 
+  /**
+   * Get children of a tree item
+   * @param element
+   */
   async getChildren(
     element?: StackingContextItem,
   ): Promise<StackingContextItem[]> {
@@ -49,6 +60,11 @@ export class StackingContextsProvider
     }
   }
 
+  /**
+   * Refresh the tree view
+   * @param stackingContexts
+   * @param documentUri
+   */
   refresh(stackingContexts: any[], documentUri: vscode.Uri): void {
     this.stackingContexts = stackingContexts;
     this.documentUri = documentUri;

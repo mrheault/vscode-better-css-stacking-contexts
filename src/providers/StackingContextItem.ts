@@ -2,6 +2,9 @@ import * as vscode from 'vscode';
 import { Logger } from '../helpers/logger';
 import { StackingContext } from '../types/StackingContext';
 
+/**
+ * Stacking Contexts tree view item
+ */
 export class StackingContextItem extends vscode.TreeItem {
   constructor(
     public readonly label: string,

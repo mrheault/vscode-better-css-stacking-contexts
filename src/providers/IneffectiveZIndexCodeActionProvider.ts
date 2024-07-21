@@ -1,9 +1,19 @@
 import * as vscode from 'vscode';
 import { INEFFECTIVE_Z_INDEX_CODE } from '../contants/globals';
 
+/**
+ * Code action provider for ineffective z-index diagnostics
+ */
 export class IneffectiveZIndexCodeActionProvider
   implements vscode.CodeActionProvider
 {
+  /**
+   * Provide code actions for ineffective z-index diagnostics
+   * @param document
+   * @param range
+   * @param context
+   * @param token
+   */
   public provideCodeActions(
     document: vscode.TextDocument,
     range: vscode.Range,
@@ -24,6 +34,12 @@ export class IneffectiveZIndexCodeActionProvider
     return actions;
   }
 
+  /**
+   * Create a fix to remove the ineffective z-index declaration
+   * @param document
+   * @param range
+   * @private
+   */
   private createRemoveFix(
     document: vscode.TextDocument,
     range: vscode.Range,
@@ -41,6 +57,12 @@ export class IneffectiveZIndexCodeActionProvider
     return fix;
   }
 
+  /**
+   * Create a fix to add a stacking context to the parent element
+   * @param document
+   * @param range
+   * @private
+   */
   private createAddStackingContextFix(
     document: vscode.TextDocument,
     range: vscode.Range,

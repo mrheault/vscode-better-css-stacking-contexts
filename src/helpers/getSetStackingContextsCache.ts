@@ -3,6 +3,11 @@ import { StackingContext } from '../types/StackingContext';
 import { findStackingContexts } from './findStackingContexts';
 import { Logger } from './logger';
 
+/**
+ * Get or set stacking contexts in cache
+ * @param document
+ * @param cache
+ */
 export async function getSetStackingContexts(
   document: vscode.TextDocument,
   cache: any,

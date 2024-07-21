@@ -9,29 +9,25 @@ import { StackingContextsAndZIndexProvider } from './providers/StackingContextsA
 import { StackingContextsProvider } from './providers/StackingContextsProvider';
 import { diagnosticsCollection, DOCUMENT_SELECTOR } from './contants/globals';
 
+/**
+ * Activate the extension
+ * @param context
+ */
 export function activate(context: vscode.ExtensionContext) {
   const cache = new Cache(context, 'betterStackingContextsCache');
   const navigateToPropertyCommand = new NavigateToPropertyCommand();
   const stackingContextsProvider = new StackingContextsProvider([]);
   const decorationsProvider = new StackingContextsAndZIndexProvider(cache);
-  let refreshCommand = vscode.commands.registerCommand(
-    'stackingContexts.refreshView',
-    async function () {
-      if (vscode.window.activeTextEditor) {
-        const document = vscode.window.activeTextEditor.document;
-        const documentUri = document.uri;
-        cache.forget(document.uri.toString());
-        stackingContextsProvider.refresh([], documentUri);
-        const stackingContexts = await getSetStackingContexts(document, cache);
-        if (stackingContexts) {
-          stackingContextsProvider.refresh(stackingContexts, documentUri);
-        }
-      }
-    },
-  );
 
+  /**
+   * Register all commands
+   */
   function registerCommands() {
     context.subscriptions.push(
+      vscode.commands.registerCommand(
+        'stackingContexts.refreshView',
+        refreshView,
+      ),
       vscode.commands.registerCommand(
         'stackingContexts.navigateToProperty',
         navigateToPropertyCommand.execute,
@@ -39,6 +35,9 @@ export function activate(context: vscode.ExtensionContext) {
     );
   }
 
+  /**
+   * Register all providers
+   */
   function registerProviders() {
     vscode.window.registerTreeDataProvider(
       'stackingContextsView',
@@ -55,21 +54,98 @@ export function activate(context: vscode.ExtensionContext) {
     );
   }
 
-  context.subscriptions.push(
-    vscode.workspace.onDidChangeConfiguration((e) => {
-      if (
-        e.affectsConfiguration('betterStackingContexts.decorationColor') ||
-        e.affectsConfiguration('betterStackingContexts.messageText')
-      ) {
-        if (vscode.window.activeTextEditor) {
-          const document = vscode.window.activeTextEditor.document;
-          debouncedTriggerUpdateDecorations(document);
-        }
+  /**
+   * Register all event listeners
+   */
+  function registerEventListeners() {
+    context.subscriptions.push(
+      vscode.workspace.onDidChangeConfiguration(handleConfigChange),
+      vscode.window.onDidChangeActiveTextEditor(handleActiveEditorChange),
+      vscode.workspace.onDidChangeTextDocument(handleTextDocumentChange),
+    );
+  }
+
+  /**
+   * Refresh the view
+   */
+  async function refreshView() {
+    const editor = vscode.window.activeTextEditor;
+    if (editor) {
+      const document = editor.document;
+      cache.forget(document.uri.toString());
+      const stackingContexts = await getSetStackingContexts(document, cache);
+      if (stackingContexts) {
+        stackingContextsProvider.refresh(stackingContexts, document.uri);
       }
-    }),
+    }
+  }
+
+  const debouncedUpdateTreeView = lodash.debounce(updateTreeView, 300);
+  const debouncedUpdateDecorations = lodash.debounce(
+    (document) => decorationsProvider.updateDecorations(document),
+    300,
+  );
+  const debouncedZIndexDiagnostic = lodash.debounce(
+    (document) => decorationsProvider.provideZIndexDiagnostic(document),
+    300,
   );
 
-  const updateTreeView = async (document?: vscode.TextDocument) => {
+  /**
+   * Handle configuration changes
+   * @param e
+   */
+  function handleConfigChange(e: vscode.ConfigurationChangeEvent) {
+    if (
+      e.affectsConfiguration('betterStackingContexts.decorationColor') ||
+      e.affectsConfiguration('betterStackingContexts.messageText')
+    ) {
+      const editor = vscode.window.activeTextEditor;
+      if (editor) {
+        debouncedUpdateDecorations(editor.document);
+      }
+    }
+  }
+
+  /**
+   * Handle editor updates
+   * @param document
+   */
+  function handleEditorUpdates(document: vscode.TextDocument) {
+    debouncedUpdateTreeView(document);
+    debouncedUpdateDecorations(document);
+    debouncedZIndexDiagnostic(document);
+  }
+
+  /**
+   * Handle active editor change
+   * @param editor
+   */
+  function handleActiveEditorChange(editor: vscode.TextEditor | undefined) {
+    if (editor) {
+      handleEditorUpdates(editor.document);
+    }
+  }
+
+  /**
+   * Handle text document change
+   * @param event
+   */
+  function handleTextDocumentChange(event: vscode.TextDocumentChangeEvent) {
+    if (['css', 'scss'].includes(event.document.languageId)) {
+      cache.forget(event.document.uri.toString());
+      getSetStackingContexts(event.document, cache);
+    }
+    const activeEditor = vscode.window.activeTextEditor;
+    if (activeEditor && event.document === activeEditor.document) {
+      handleEditorUpdates(event.document);
+    }
+  }
+
+  /**
+   * Update the tree view
+   * @param document
+   */
+  async function updateTreeView(document?: vscode.TextDocument) {
     if (
       document &&
       (document.languageId === 'css' || document.languageId === 'scss')
@@ -80,85 +156,30 @@ export function activate(context: vscode.ExtensionContext) {
         stackingContextsProvider.refresh(stackingContexts, documentUri);
       }
     }
-  };
-  const debouncedUpdateTreeView = lodash.debounce(updateTreeView, 300);
+  }
 
-  const debouncedTriggerUpdateDecorations = lodash.debounce(
-    (document) => decorationsProvider.updateDecorations(document),
-    300,
-  );
-
-  const debouncedTriggerZIndexDiagnostic = lodash.debounce(
-    (document) => decorationsProvider.provideZIndexDiagnostic(document),
-    300,
-  );
-
+  /**
+   * Handle initial activation
+   */
   if (vscode.window.activeTextEditor) {
     try {
-      debouncedUpdateTreeView(vscode.window.activeTextEditor.document);
-      debouncedTriggerUpdateDecorations(
-        vscode.window.activeTextEditor.document,
-      );
-      debouncedTriggerZIndexDiagnostic(vscode.window.activeTextEditor.document);
+      handleEditorUpdates(vscode.window.activeTextEditor.document);
     } catch (e) {
       Logger.error((e as Error).message);
     }
   }
-  vscode.workspace.onDidChangeTextDocument(async (event) => {
-    if (
-      event.document.languageId === 'css' ||
-      event.document.languageId === 'scss'
-    ) {
-      // Invalidate the cache
-      cache.forget(event.document.uri.toString());
 
-      await getSetStackingContexts(event.document, cache);
-    }
-    const activeEditor = vscode.window.activeTextEditor;
-    if (activeEditor && event.document === activeEditor.document) {
-      debouncedTriggerZIndexDiagnostic(event.document);
-    }
-  });
-  vscode.window.onDidChangeActiveTextEditor(
-    (editor) => {
-      if (editor) {
-        try {
-          debouncedUpdateTreeView(editor.document);
-          debouncedTriggerUpdateDecorations(editor.document);
-          debouncedTriggerZIndexDiagnostic(editor.document);
-        } catch (e) {
-          Logger.error((e as Error).message);
-        }
-      }
-    },
-    null,
-    context.subscriptions,
-  );
-
-  vscode.workspace.onDidChangeTextDocument(
-    (event) => {
-      if (
-        vscode.window.activeTextEditor &&
-        event.document === vscode.window.activeTextEditor.document
-      ) {
-        try {
-          debouncedUpdateTreeView(event.document);
-          debouncedTriggerUpdateDecorations(event.document);
-          debouncedTriggerZIndexDiagnostic(event.document);
-        } catch (e) {
-          Logger.error((e as Error).message);
-        }
-      }
-    },
-    null,
-    context.subscriptions,
-  );
-
+  /**
+   * Register all commands, providers and event listeners
+   */
   registerCommands();
   registerProviders();
+  registerEventListeners();
 
+  /**
+   * Add the diagnostics collection to the subscriptions
+   */
   context.subscriptions.push(diagnosticsCollection);
-  context.subscriptions.push(refreshCommand);
 
   Logger.info(
     'vscode-better-stacking-contexts is now active. Please open a CSS or SCSS file to see the extension in action.',

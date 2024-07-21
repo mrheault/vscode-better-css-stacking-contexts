@@ -44,6 +44,10 @@ const nonNoneValues = new Set([
   'mask-border',
 ]);
 
+/**
+ * Check if a declaration creates a stacking context
+ * @param node
+ */
 function isStackingContextCreatingValue(node: Declaration): boolean {
   const value = node.value.trim().toLowerCase();
   const propValueCombo = `${node.prop}: ${value}`;
@@ -112,6 +116,11 @@ function isStackingContextCreatingValue(node: Declaration): boolean {
   return stackingProperties.has(propValueCombo);
 }
 
+/**
+ * Find stacking contexts in CSS/SCSS
+ * @param content
+ * @param isScss
+ */
 export async function findStackingContexts(
   content: string,
   isScss: boolean = false,
@@ -147,6 +156,10 @@ export async function findStackingContexts(
   return stackingContexts;
 }
 
+/**
+ * Check if a declaration is an ineffective z-index declaration
+ * @param declaration
+ */
 export function isIneffectiveZIndexDeclaration(
   declaration: Declaration,
 ): boolean {

@@ -15,6 +15,9 @@ import {
 import { Logger } from '../helpers/logger';
 import { nodeRange } from '../helpers/nodeRange';
 
+/**
+ * Provider for stacking contexts and z-index diagnostics
+ */
 export class StackingContextsAndZIndexProvider {
   private readonly decorationType: vscode.TextEditorDecorationType;
   private readonly cache: any;
@@ -32,6 +35,10 @@ export class StackingContextsAndZIndexProvider {
     });
   }
 
+  /**
+   * Provide diagnostics for the z-index property
+   * @param document
+   */
   public async provideZIndexDiagnostic(
     document: vscode.TextDocument,
   ): Promise<void> {
@@ -58,6 +65,10 @@ export class StackingContextsAndZIndexProvider {
     }
   }
 
+  /**
+   * Update the decorations for the active editor
+   * @param document
+   */
   public async updateDecorations(document: vscode.TextDocument): Promise<void> {
     const stackingContexts = await findStackingContexts(
       document.getText(),
@@ -91,6 +102,10 @@ export class StackingContextsAndZIndexProvider {
     }
   }
 
+  /**
+   * Listen for document changes
+   * @private
+   */
   private listenForDocumentChanges(): void {
     vscode.workspace.onDidChangeTextDocument(
       (event: vscode.TextDocumentChangeEvent) => {
@@ -100,6 +115,15 @@ export class StackingContextsAndZIndexProvider {
     );
   }
 
+  /**
+   * Add a diagnostic to the diagnostics collection
+   * @param document
+   * @param range
+   * @param message
+   * @param severity
+   * @param code
+   * @param tags
+   */
   public async addDiagnostic(
     document: vscode.TextDocument,
     range: vscode.Range,

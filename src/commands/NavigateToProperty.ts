@@ -3,6 +3,9 @@ import * as vscode from 'vscode';
 import { Logger } from '../helpers/logger';
 import { StackingContext } from '../types/StackingContext';
 
+/**
+ * Command to navigate to a CSS property
+ */
 export class NavigateToPropertyCommand {
   private readonly debouncedExecute: ReturnType<typeof lodash.debounce>;
 
