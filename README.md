@@ -1,56 +1,51 @@
-# VSCode Better CSS Stacking Contexts
+# VSCode Better CSS Stacking Contexts ![Version](https://img.shields.io/visual-studio-marketplace/v/mikerheault.vscode-better-css-stacking-contexts)
 
-Better CSS Stacking Contexts is a VSCode extension designed to simplify the process of managing z-index and stacking contexts in your CSS/SCSS. By providing visual cues and intelligent quick fixes, this extension helps developers create more maintainable and bug-free layouts.
+Better CSS Stacking Contexts is a VSCode extension designed to simplify managing z-index and stacking contexts in CSS/SCSS. It provides visual cues and quick fixes to help developers create maintainable and bug-free layouts.
 
 ## Features
 
-* Stacking Context Highlighting: Automatically identifies and highlights elements that create new stacking contexts in your CSS/SCSS files.
-* Z-Index Analysis: Detects potentially ineffective z-index values and provides visual warnings.
-* Quick Fixes: Offers suggestions to resolve ineffective z-index usage, improving your CSS/SCSS structure with a single click.
-* Real-time Feedback: Works as you type, providing immediate insights into your stacking context hierarchy.
-* Tree View: Displays a tree view of your stacking context which is navigable to each property.
+- **Stacking Context Highlighting**: Identifies and highlights new stacking contexts.
+- **Z-Index Analysis**: Detects ineffective z-index values with visual warnings.
+- **Quick Fixes**: Suggests fixes for ineffective z-index usage.
+- **Real-time Feedback**: Provides insights into stacking context hierarchy as you type.
+- **Tree View**: Navigable tree view of stacking contexts.
 
-## Screenshots
-<figure>
-<picture>
-<source srcset="https://raw.githubusercontent.com/mrheault/vscode-better-css-stacking-contexts/main/images/Treeview-dark.gif" media="(prefers-color-scheme: dark)" />
-<source srcset="https://raw.githubusercontent.com/mrheault/vscode-better-css-stacking-contexts/main/images/treeview-light.gif" media="(prefers-color-scheme: light)" />
-<img alt="Screenshot" src="https://raw.githubusercontent.com/mrheault/vscode-better-css-stacking-contexts/main/images/treeview-light.gif" />
-</picture>
-  <figcaption>Treeview - Navigation to property</figcaption>
-</figure>
+## Installation
+There are several ways to install.
+* Install from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=mikerheault.vscode-better-css-stacking-contexts).
+* From the VS Code Extensions view (`Ctrl+Shift+X`) or (` Cmd+Shift+X`), search for `Better CSS Stacking Contexts`.
+* Run `ext install mikerheault.vscode-better-css-stacking-contexts` in the command palette (`Ctrl+Shift+P`) or (`Cmd+Shift+P`).
 
-<figure>
-<picture>
-<source srcset="https://raw.githubusercontent.com/mrheault/vscode-better-css-stacking-contexts/main/images/quickfix-dark.gif" media="(prefers-color-scheme: dark)" />
-<source srcset="https://raw.githubusercontent.com/mrheault/vscode-better-css-stacking-contexts/main/images/quickfix-light.gif" media="(prefers-color-scheme: light)" />
-<img alt="Screenshot" src="https://raw.githubusercontent.com/mrheault/vscode-better-css-stacking-contexts/main/images/quickfix-light.gif" />
-</picture>
-  <figcaption>Quickfix - ineffective z-index</figcaption>
-</figure>
+## Demo
+
+![Treeview Navigation](https://raw.githubusercontent.com/mrheault/vscode-better-css-stacking-contexts/main/images/Treeview-dark.gif)
+*Treeview - Navigation to property*
+
+![Quickfix Example](https://raw.githubusercontent.com/mrheault/vscode-better-css-stacking-contexts/main/images/quickfix-dark.gif)
+*Quickfix - ineffective z-index*
 
 ## Extension Settings
 
-This extension contributes the following settings:
-
-* `betterStackingContexts.decorationColor`: Color of the decoration used to highlight stacking contexts.
-* `betterStackingContexts.messageText`: Message text displayed as a decoration.
-* `betterStackingContexts.stackingContextMethod`: Method to use for creating a new stacking context. Options are `isolation: isolate;` and `position: relative;`.
+- `betterStackingContexts.decorationColor`: Highlight color.
+- `betterStackingContexts.messageText`: Decoration message text.
+- `betterStackingContexts.stackingContextMethod`: Method for new stacking context.
 
 ## Usage
-Once installed, the extension will automatically start analyzing your CSS/SCSS files. Look for highlighted regions and hover over stacking context/z-index declarations to see detailed information and available quick fixes.
+
+The extension analyzes CSS/SCSS files automatically, highlighting regions and providing information and fixes for stacking context and z-index issues.
 
 ## Contributing
-[We welcome contributions!](https://github.com/mrheault/vscode-better-css-stacking-contexts/pulls)
+
+[Contributions are welcome!](https://github.com/mrheault/vscode-better-css-stacking-contexts/pulls)
 
 ## License
-This project is licensed under the MIT License.
+
+Licensed under the MIT License.
 
 ## Support
-If you encounter any issues or have feature requests, please [file an issue](https://github.com/mrheault/vscode-better-css-stacking-contexts/issues) on our GitHub repository.
+
+For issues or feature requests, [file an issue](https://github.com/mrheault/vscode-better-css-stacking-contexts/issues).
 
 ## Release Notes
 
-Change log can be found [here](https://github.com/mrheault/vscode-better-css-stacking-contexts/blob/main/CHANGELOG.md)
-
-
+[Change log here](https://github.com/mrheault/vscode-better-css-stacking-contexts/blob/main/CHANGELOG.md)
