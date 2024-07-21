@@ -24,14 +24,12 @@ export class IneffectiveZIndexCodeActionProvider
       (diagnostic) => diagnostic.code === INEFFECTIVE_Z_INDEX_CODE,
     );
 
-    const actions = diagnostics
+    return diagnostics
       .map((diagnostic) => [
         this.createRemoveFix(document, diagnostic.range),
         this.createAddStackingContextFix(document, diagnostic.range),
       ])
       .flat();
-
-    return actions;
   }
 
   /**

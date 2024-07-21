@@ -1,4 +1,4 @@
-import postcss, { Node, Declaration, Position } from 'postcss';
+import postcss, { Node, Declaration } from 'postcss';
 import scssSyntax from 'postcss-scss';
 import { StackingContext } from '../types/StackingContext';
 import { Logger } from './logger';
