@@ -1,3 +1,4 @@
+![Icon](https://raw.githubusercontent.com/mrheault/vscode-better-css-stacking-contexts/main/images/better-stacking-contexts-icon.png)
 # VSCode Better CSS Stacking Contexts ![Version](https://img.shields.io/visual-studio-marketplace/v/mikerheault.vscode-better-css-stacking-contexts)
 
 Better CSS Stacking Contexts is a VSCode extension designed to simplify managing z-index and stacking contexts in CSS/SCSS. It provides visual cues and quick fixes to help developers create maintainable and bug-free layouts.
