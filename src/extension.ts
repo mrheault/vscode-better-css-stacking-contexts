@@ -2,10 +2,8 @@ import lodash from 'lodash';
 import * as vscode from 'vscode';
 import Cache from 'vscode-cache';
 import { NavigateToPropertyCommand } from './commands/NavigateToProperty';
-import { findStackingContexts } from './helpers/findStackingContexts';
 import { getSetStackingContexts } from './helpers/getSetStackingContextsCache';
 import { Logger } from './helpers/logger';
-import { triggerUpdateDecorations } from './helpers/triggerUpdateDecorations';
 import { IneffectiveZIndexCodeActionProvider } from './providers/IneffectiveZIndexCodeActionProvider';
 import { StackingContextsAndZIndexProvider } from './providers/StackingContextsAndZIndexProvider';
 import { StackingContextsProvider } from './providers/StackingContextsProvider';
@@ -65,13 +63,7 @@ export function activate(context: vscode.ExtensionContext) {
       ) {
         if (vscode.window.activeTextEditor) {
           const document = vscode.window.activeTextEditor.document;
-          triggerUpdateDecorations(document)
-            .then(() => {
-              Logger.info('Decorations updated successfully');
-            })
-            .catch((error) => {
-              Logger.error(`Failed to update decorations: ${error.message}`);
-            });
+          debouncedTriggerUpdateDecorations(document);
         }
       }
     }),
