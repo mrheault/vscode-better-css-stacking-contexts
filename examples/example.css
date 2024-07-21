@@ -1,17 +1,100 @@
-.example1 {
+
+/* General Styles */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  width: 80%;
+  margin: 0 auto;
+  padding: 20px;
+  background: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Header Styles */
+.header {
+  background-color: #333;
+  color: #fff;
+  padding: 10px 0;
+  text-align: center;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+/* Button Styles */
+.button {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
+  color: #fff;
+  background-color: #007bff;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+.button:hover {
+  background-color: #0056b3;
+}
+
+/* Card Styles */
+.card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 10px 0;
+}
+
+.card h2 {
+  margin-top: 0;
+}
+
+/* Footer Styles */
+.footer {
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 10px 0;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+
+.container {
   position: relative;
   z-index: 2;
 }
 
-.example2 {
+.video {
   left: 0;
   position: absolute;
   top: 0;
 }
 
-.example3 {
-  width: 100%;
-  height: 100%;
-  display: block;
-  z-index: 1;
+.overlay {
+  left: 0;
+  position: absolute;
+  top: 0;
+
+  .box {
+    width: 100%;
+    height: 100%;
+    display: block;
+    z-index: 1;
+  }
+}
+
+
+.example4 {
+  display: flex;
+  z-index: 3;
 }
