@@ -1,7 +1,7 @@
 {
   "name": "vscode-better-stacking-contexts",
-  "displayName": "CSS Better Stacking Context Highlighter",
-  "description": "Highlights CSS stacking contexts in VS Code.",
+  "displayName": "CSS Better Stacking Contexts",
+  "description": "Highlights CSS stacking contexts and ineffective z-index declarations in VS Code.",
   "author": "Mike Rheault",
   "license": "MIT",
   "repository": {
@@ -28,7 +28,24 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
+    "commands": [
+      {
+        "command": "stackingContexts.refreshView",
+        "title": "Refresh Stacking Contexts",
+        "icon": "$(sync)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "when": "view == stackingContextsView",
+          "command": "stackingContexts.refreshView",
+          "group": "navigation"
+        }
+      ]
+    },
     "configuration": {
+
       "title": "Better Stacking Contexts",
       "properties": {
         "betterStackingContexts.decorationColor": {

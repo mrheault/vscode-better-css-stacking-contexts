@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 import Cache from 'vscode-cache';
 import { NavigateToPropertyCommand } from './commands/NavigateToProperty';
 import { findStackingContexts } from './helpers/findStackingContexts';
-import { getOrFetchStackingContexts } from './helpers/getSetStackingContextsCache';
+import { getSetStackingContexts } from './helpers/getSetStackingContextsCache';
 import { Logger } from './helpers/logger';
 import { triggerUpdateDecorations } from './helpers/triggerUpdateDecorations';
 import { IneffectiveZIndexCodeActionProvider } from './providers/IneffectiveZIndexCodeActionProvider';
@@ -16,26 +16,48 @@ export function activate(context: vscode.ExtensionContext) {
   const navigateToPropertyCommand = new NavigateToPropertyCommand();
   const stackingContextsProvider = new StackingContextsProvider([]);
   const decorationsProvider = new StackingContextsAndZIndexProvider(cache);
-
-  vscode.window.registerTreeDataProvider(
-    'stackingContextsView',
-    stackingContextsProvider,
+  let refreshCommand = vscode.commands.registerCommand(
+    'stackingContexts.refreshView',
+    async function () {
+      if (vscode.window.activeTextEditor) {
+        const document = vscode.window.activeTextEditor.document;
+        const documentUri = document.uri;
+        cache.forget(document.uri.toString());
+        stackingContextsProvider.refresh([], documentUri);
+        const stackingContexts = await getSetStackingContexts(document, cache);
+        if (stackingContexts) {
+          stackingContextsProvider.refresh(stackingContexts, documentUri);
+        }
+      }
+    },
   );
-  context.subscriptions.push(diagnosticsCollection);
+
+  function registerCommands() {
+    context.subscriptions.push(
+      vscode.commands.registerCommand(
+        'stackingContexts.navigateToProperty',
+        navigateToPropertyCommand.execute,
+      ),
+    );
+  }
+
+  function registerProviders() {
+    vscode.window.registerTreeDataProvider(
+      'stackingContextsView',
+      stackingContextsProvider,
+    );
+    context.subscriptions.push(
+      vscode.languages.registerCodeActionsProvider(
+        DOCUMENT_SELECTOR,
+        new IneffectiveZIndexCodeActionProvider(),
+        {
+          providedCodeActionKinds: [vscode.CodeActionKind.QuickFix],
+        },
+      ),
+    );
+  }
 
   context.subscriptions.push(
-    vscode.languages.registerCodeActionsProvider(
-      DOCUMENT_SELECTOR,
-      new IneffectiveZIndexCodeActionProvider(),
-      {
-        providedCodeActionKinds: [vscode.CodeActionKind.QuickFix],
-      },
-    ),
-
-    vscode.commands.registerCommand(
-      'stackingContexts.navigateToProperty',
-      navigateToPropertyCommand.execute,
-    ),
     vscode.workspace.onDidChangeConfiguration((e) => {
       if (
         e.affectsConfiguration('betterStackingContexts.decorationColor') ||
@@ -60,10 +82,7 @@ export function activate(context: vscode.ExtensionContext) {
       document &&
       (document.languageId === 'css' || document.languageId === 'scss')
     ) {
-      const stackingContexts = await getOrFetchStackingContexts(
-        document,
-        cache,
-      );
+      const stackingContexts = await getSetStackingContexts(document, cache);
       if (stackingContexts) {
         const documentUri = document.uri;
         stackingContextsProvider.refresh(stackingContexts, documentUri);
@@ -101,7 +120,7 @@ export function activate(context: vscode.ExtensionContext) {
       // Invalidate the cache
       cache.forget(event.document.uri.toString());
 
-      await getOrFetchStackingContexts(event.document, cache);
+      await getSetStackingContexts(event.document, cache);
     }
     const activeEditor = vscode.window.activeTextEditor;
     if (activeEditor && event.document === activeEditor.document) {
@@ -142,6 +161,13 @@ export function activate(context: vscode.ExtensionContext) {
     null,
     context.subscriptions,
   );
+
+  registerCommands();
+  registerProviders();
+
+  context.subscriptions.push(diagnosticsCollection);
+  context.subscriptions.push(refreshCommand);
+
   Logger.info(
     'vscode-better-stacking-contexts is now active. Please open a CSS or SCSS file to see the extension in action.',
   );

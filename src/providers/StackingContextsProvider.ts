@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { Logger } from '../helpers/logger';
+import { StackingContext } from '../types/StackingContext';
 import { StackingContextItem } from './StackingContextItem';
 
 export class StackingContextsProvider
@@ -13,7 +14,7 @@ export class StackingContextsProvider
   > = this._onDidChangeTreeData.event;
 
   constructor(
-    private stackingContexts: any[] = [],
+    private stackingContexts: StackingContext[] = [],
     private documentUri?: vscode.Uri,
   ) {}
 
