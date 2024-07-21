@@ -3,11 +3,16 @@
   "displayName": "Better CSS Stacking Contexts",
   "description": "Highlights CSS stacking contexts and ineffective z-index declarations in VS Code.",
   "author": "Mike Rheault",
+  "publisher": "mikerheault",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/mrheault/vscode-better-css-stacking-contexts"
   },
+  "bugs": {
+    "url": "https://github.com/mrheault/vscode-better-css-stacking-contexts/issues"
+  },
+  "homepage": "https://github.com/mrheault/vscode-better-css-stacking-contexts#readme",
   "keywords": [
     "css",
     "scss",
@@ -20,12 +25,14 @@
   },
   "categories": [
     "Linters",
-    "Programming Languages"
+    "Programming Languages",
+    "Other"
   ],
   "activationEvents": [
     "onLanguage:css",
     "onLanguage:scss"
   ],
+  "pricing": "Free",
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
