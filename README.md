@@ -8,7 +8,14 @@ Better CSS Stacking Contexts is a VSCode extension designed to simplify the proc
 * Z-Index Analysis: Detects potentially ineffective z-index values and provides visual warnings.
 * Quick Fixes: Offers intelligent suggestions to resolve ineffective z-index usage, improving your CSS/SCSS structure with a single click.
 * Real-time Feedback: Works as you type, providing immediate insights into your stacking context hierarchy.
+* Tree View: Displays a tree view of your stacking context which is navigable to each property.
 
+## Screenshots
+<picture>
+<source srcset="https://raw.githubusercontent.com/mrheault/vscode-better-css-stacking-contexts/main/images/treeview-dark.gif" media="(prefers-color-scheme: dark)" />
+<source srcset="https://raw.githubusercontent.com/mrheault/vscode-better-css-stacking-contexts/main/images/treeview-light.gif" media="(prefers-color-scheme: light)" />
+<img alt="Screenshot" src="https://raw.githubusercontent.com/mrheault/vscode-better-css-stacking-contexts/main/images/treeview-light.gif" />
+</picture>
 
 ## Extension Settings
 
