@@ -1,8 +1,14 @@
+import lodash from 'lodash';
 import * as vscode from 'vscode';
 import { Logger } from '../helpers/logger';
 import { StackingContext } from '../types/StackingContext';
 
 export class NavigateToPropertyCommand {
+  private readonly debouncedExecute: ReturnType<typeof lodash.debounce>;
+
+  constructor() {
+    this.debouncedExecute = lodash.debounce(this.execute.bind(this), 200);
+  }
   async execute(documentUri: vscode.Uri, context: StackingContext) {
     try {
       let editor = vscode.window.visibleTextEditors.find(
@@ -29,5 +35,13 @@ export class NavigateToPropertyCommand {
       Logger.error(`Failed to navigate to property: ${(e as Error).message}`);
       vscode.window.showErrorMessage('Failed to navigate to the CSS property.');
     }
+  }
+  public async executeWrapper(
+    documentUri: vscode.Uri,
+    context: StackingContext,
+  ): Promise<void> {
+    return new Promise((resolve) => {
+      this.debouncedExecute(documentUri, context, resolve);
+    });
   }
 }

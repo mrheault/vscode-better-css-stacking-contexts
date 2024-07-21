@@ -34,9 +34,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     vscode.commands.registerCommand(
       'stackingContexts.navigateToProperty',
-      async (documentUri: vscode.Uri, range) => {
-        await navigateToPropertyCommand.execute(documentUri, range);
-      },
+      navigateToPropertyCommand.execute,
     ),
     vscode.workspace.onDidChangeConfiguration((e) => {
       if (
@@ -72,16 +70,16 @@ export function activate(context: vscode.ExtensionContext) {
       }
     }
   };
-  const debouncedUpdateTreeView = lodash.debounce(updateTreeView, 200);
+  const debouncedUpdateTreeView = lodash.debounce(updateTreeView, 300);
 
   const debouncedTriggerUpdateDecorations = lodash.debounce(
     (document) => decorationsProvider.updateDecorations(document),
-    200,
+    300,
   );
 
   const debouncedTriggerZIndexDiagnostic = lodash.debounce(
     (document) => decorationsProvider.provideZIndexDiagnostic(document),
-    200,
+    300,
   );
 
   if (vscode.window.activeTextEditor) {

@@ -21,7 +21,9 @@ export class StackingContextsProvider
     return element;
   }
 
-  getChildren(element?: StackingContextItem): Thenable<StackingContextItem[]> {
+  async getChildren(
+    element?: StackingContextItem,
+  ): Promise<StackingContextItem[]> {
     if (element) {
       return Promise.resolve([]);
     } else {
@@ -29,20 +31,20 @@ export class StackingContextsProvider
         Logger.warning('Document URI is undefined in StackingContextsProvider');
         return Promise.resolve([]);
       }
-      return Promise.resolve(
-        this.stackingContexts.map((context, index) => {
+      try {
+        return this.stackingContexts.map((context, index) => {
           return new StackingContextItem(
             `Context ${index + 1}: ${context.selector}`,
             context,
             this.documentUri,
           );
-        }),
-      ).catch((error) => {
+        });
+      } catch (error: any) {
         Logger.error(
           `Error in getChildren method of StackingContextsProvider: ${error.message}`,
         );
-        return []; // Return an empty array in case of error
-      });
+        return [];
+      }
     }
   }
 
