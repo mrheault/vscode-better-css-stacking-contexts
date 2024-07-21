@@ -6,6 +6,7 @@ import { findStackingContexts } from './helpers/findStackingContexts';
 import { getOrFetchStackingContexts } from './helpers/getSetStackingContextsCache';
 import { Logger } from './helpers/logger';
 import { triggerUpdateDecorations } from './helpers/triggerUpdateDecorations';
+import { IneffectiveZIndexCodeActionProvider } from './providers/IneffectiveZIndexCodeActionProvider';
 import { StackingContextsAndZIndexProvider } from './providers/StackingContextsAndZIndexProvider';
 import { StackingContextsProvider } from './providers/StackingContextsProvider';
 import { diagnosticsCollection, DOCUMENT_SELECTOR } from './contants/globals';
@@ -23,10 +24,13 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(diagnosticsCollection);
 
   context.subscriptions.push(
-    /*vscode.languages.registerHoverProvider(
+    vscode.languages.registerCodeActionsProvider(
       DOCUMENT_SELECTOR,
-      decorationsProvider,
-    ),*/
+      new IneffectiveZIndexCodeActionProvider(),
+      {
+        providedCodeActionKinds: [vscode.CodeActionKind.QuickFix],
+      },
+    ),
 
     vscode.commands.registerCommand(
       'stackingContexts.navigateToProperty',

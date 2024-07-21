@@ -118,23 +118,31 @@ export async function findStackingContexts(
 ): Promise<StackingContext[]> {
   const stackingContexts: StackingContext[] = [];
   const syntax = isScss ? scssSyntax : undefined;
-  const result = await postcss().process(content, { syntax: syntax });
 
-  result.root?.walkRules((rule) => {
-    rule.nodes?.forEach((node: any) => {
-      if (isDeclaration(node) && isStackingContextCreatingValue(node)) {
-        if (node.source?.start && node.source.end) {
-          stackingContexts.push({
-            start: node.source.start,
-            end: node.source.end,
-            selector: rule.selector,
-            property: node.prop,
-            value: node.value,
-          });
-        }
-      }
+  try {
+    const result = await postcss().process(content, {
+      syntax: syntax,
+      from: undefined,
     });
-  });
+
+    result.root?.walkRules((rule) => {
+      rule.nodes?.forEach((node: any) => {
+        if (isDeclaration(node) && isStackingContextCreatingValue(node)) {
+          if (node.source?.start && node.source.end) {
+            stackingContexts.push({
+              start: node.source.start,
+              end: node.source.end,
+              selector: rule.selector,
+              property: node.prop,
+              value: node.value,
+            });
+          }
+        }
+      });
+    });
+  } catch (e) {
+    Logger.error(`Error processing CSS/SCSS: ${e}`);
+  }
 
   return stackingContexts;
 }

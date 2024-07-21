@@ -40,6 +40,16 @@
           "type": "string",
           "default": " 🤐 This property creates a new stacking context",
           "description": "Message text displayed as a decoration."
+        },
+        "betterStackingContexts.stackingContextMethod": {
+          "type": "string",
+          "default": "position",
+          "enum": ["position", "isolation"],
+          "enumDescriptions": [
+            "Use `position: relative;` to create a stacking context.",
+            "Use `isolation: isolate;` to create a stacking context."
+          ],
+          "description": "Method to use for creating a new stacking context."
         }
       }
     },
