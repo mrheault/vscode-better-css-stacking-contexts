@@ -6,4 +6,5 @@ export type StackingContext = {
   selector: string;
   property: string;
   value: string;
+  relatedProperty?: string;
 };

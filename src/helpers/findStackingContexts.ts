@@ -1,19 +1,11 @@
-import postcss, { Node, Declaration } from 'postcss';
+import postcss, { Declaration } from 'postcss';
 import scssSyntax from 'postcss-scss';
+import { isDeclaration } from '../contants/globals';
 import { StackingContext } from '../types/StackingContext';
 import { Logger } from './logger';
 
-export const isDeclaration = (node: Node): node is Declaration =>
-  node.type === 'decl';
-
-const globalNeutralValues = new Set<string>([
-  'unset',
-  'initial',
-  'inherit',
-  'revert',
-]);
-
-const stackingProperties = new Set<string>([
+const globalNeutralValues = new Set(['unset', 'initial', 'inherit', 'revert']);
+const stackingProperties = new Set([
   'position: fixed',
   'position: sticky',
   'position: absolute',
@@ -51,7 +43,6 @@ const nonNoneValues = new Set([
 function isStackingContextCreatingValue(node: Declaration): boolean {
   const value = node.value.trim().toLowerCase();
   const propValueCombo = `${node.prop}: ${value}`;
-  // Check for individual transform properties without specific values
   if (
     ['rotate', 'translate', 'scale'].includes(node.prop) &&
     value !== 'none'
@@ -117,6 +108,35 @@ function isStackingContextCreatingValue(node: Declaration): boolean {
 }
 
 /**
+ * Find a second property needed for a stacking context creating property
+ * @param node
+ */
+function findRelatedProperty(node: any) {
+  let relatedProperty: string | undefined;
+  const propValueCombo = `${node.prop}: ${node.value.trim().toLowerCase()}`;
+
+  if (
+    [
+      'position: absolute',
+      'position: relative',
+      'position: fixed',
+      'position: sticky',
+    ].includes(propValueCombo) ||
+    (node.prop === 'display' &&
+      ['flex', 'grid'].includes(node.value.trim().toLowerCase()))
+  ) {
+    const zIndexNode = node.parent?.nodes.find(
+      (n: postcss.Node) => isDeclaration(n) && n.prop === 'z-index',
+    ) as Declaration | undefined;
+    if (zIndexNode) {
+      relatedProperty = `${zIndexNode.prop}: ${zIndexNode.value}`;
+    }
+  }
+
+  return relatedProperty;
+}
+
+/**
  * Find stacking contexts in CSS/SCSS
  * @param content
  * @param isScss
@@ -130,13 +150,15 @@ export async function findStackingContexts(
 
   try {
     const result = await postcss().process(content, {
-      syntax: syntax,
+      syntax,
       from: undefined,
     });
 
     result.root?.walkRules((rule) => {
       rule.nodes?.forEach((node: any) => {
         if (isDeclaration(node) && isStackingContextCreatingValue(node)) {
+          let relatedProperty = findRelatedProperty(node);
+
           if (node.source?.start && node.source.end) {
             stackingContexts.push({
               start: node.source.start,
@@ -144,6 +166,7 @@ export async function findStackingContexts(
               selector: rule.selector,
               property: node.prop,
               value: node.value,
+              relatedProperty,
             });
           }
         }

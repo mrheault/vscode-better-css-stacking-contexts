@@ -1,3 +1,4 @@
+import { Declaration, Node } from 'postcss';
 import * as vscode from 'vscode';
 
 /**
@@ -18,3 +19,10 @@ export const INEFFECTIVE_Z_INDEX_CODE = 'ineffective-z-index';
  */
 export const diagnosticsCollection =
   vscode.languages.createDiagnosticCollection('better-stacking-contexts');
+
+/**
+ * Is a declaration boolean
+ * @param node
+ */
+export const isDeclaration = (node: Node): node is Declaration =>
+  node.type === 'decl';

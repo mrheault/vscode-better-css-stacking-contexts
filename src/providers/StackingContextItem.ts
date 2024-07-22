@@ -21,7 +21,7 @@ export class StackingContextItem extends vscode.TreeItem {
       this.description = `Error: Missing data`;
     } else {
       this.tooltip = `${this.label} - ${context.property}: ${context.value}`;
-      this.description = `${context.property}: ${context.value}`;
+      this.description = `${context.property}: ${context.value}; ${context.relatedProperty || ''}`;
       this.command = {
         title: 'Go To CSS Property',
         command: 'stackingContexts.navigateToProperty',
