@@ -97,6 +97,8 @@ export function activate(context: vscode.ExtensionContext) {
   function handleConfigChange(e: vscode.ConfigurationChangeEvent) {
     if (
       e.affectsConfiguration('betterStackingContexts.decorationColor') ||
+      e.affectsConfiguration('betterStackingContexts.stackingContextMethod') ||
+      e.affectsConfiguration('betterStackingContexts.backgroundColor') ||
       e.affectsConfiguration('betterStackingContexts.messageText')
     ) {
       const editor = vscode.window.activeTextEditor;

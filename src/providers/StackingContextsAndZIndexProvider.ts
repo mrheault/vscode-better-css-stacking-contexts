@@ -19,20 +19,29 @@ import { nodeRange } from '../helpers/nodeRange';
  * Provider for stacking contexts and z-index diagnostics
  */
 export class StackingContextsAndZIndexProvider {
-  private readonly decorationType: vscode.TextEditorDecorationType;
+  private readonly propertyDecorationType: vscode.TextEditorDecorationType;
+  private readonly ruleHighlightDecorationType: vscode.TextEditorDecorationType;
   private readonly cache: any;
 
   constructor(cache: any) {
     this.cache = cache;
     this.listenForDocumentChanges();
 
-    this.decorationType = vscode.window.createTextEditorDecorationType({
+    this.propertyDecorationType = vscode.window.createTextEditorDecorationType({
       after: {
         color: new vscode.ThemeColor('editorInfo.foreground'),
         contentText: ' 🤐 This property creates a new stacking context',
       },
       isWholeLine: true,
     });
+    this.ruleHighlightDecorationType =
+      vscode.window.createTextEditorDecorationType({
+        backgroundColor: new vscode.ThemeColor(
+          'editor.hoverHighlightBackground',
+        ),
+        rangeBehavior: vscode.DecorationRangeBehavior.ClosedOpen,
+        isWholeLine: true,
+      });
   }
 
   /**
@@ -81,6 +90,7 @@ export class StackingContextsAndZIndexProvider {
           document.positionAt(context.end.offset),
         ),
     );
+    const ruleRanges = stackingContexts.map((context) => context.ruleRange);
     const hoverMessage = new vscode.MarkdownString(
       dedent`
             This property introduces a new stacking context.
@@ -98,7 +108,11 @@ export class StackingContextsAndZIndexProvider {
     }));
     const activeEditor = vscode.window.activeTextEditor;
     if (activeEditor && activeEditor.document.uri === document.uri) {
-      activeEditor.setDecorations(this.decorationType, decorationOptions);
+      activeEditor.setDecorations(
+        this.propertyDecorationType,
+        decorationOptions,
+      );
+      activeEditor.setDecorations(this.ruleHighlightDecorationType, ruleRanges);
     }
   }
 

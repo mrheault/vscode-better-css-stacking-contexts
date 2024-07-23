@@ -1,8 +1,10 @@
 import postcss, { Declaration } from 'postcss';
 import scssSyntax from 'postcss-scss';
+import vscode, { Range } from 'vscode';
 import { isDeclaration } from '../contants/globals';
 import { StackingContext } from '../types/StackingContext';
 import { Logger } from './logger';
+import { nodeRange } from './nodeRange';
 
 const globalNeutralValues = new Set(['unset', 'initial', 'inherit', 'revert']);
 const stackingProperties = new Set([
@@ -164,6 +166,7 @@ export async function findStackingContexts(
               start: node.source.start,
               end: node.source.end,
               selector: rule.selector,
+              ruleRange: new Range(nodeRange(rule).start, nodeRange(rule).end),
               property: node.prop,
               value: node.value,
               relatedProperty,

@@ -60,6 +60,11 @@
           "default": "editorInfo.foreground",
           "description": "Color of the decoration used to highlight stacking contexts."
         },
+        "betterStackingContexts.backgroundColor": {
+          "type": "string",
+          "default": "editorInfo.hoverHighlightBackground",
+          "description": "Background color used to highlight stacking contexts."
+        },
         "betterStackingContexts.messageText": {
           "type": "string",
           "default": " 🤐 This property creates a new stacking context",
@@ -67,7 +72,7 @@
         },
         "betterStackingContexts.stackingContextMethod": {
           "type": "string",
-          "default": "position",
+          "default": "isolation",
           "enum": [
             "position",
             "isolation"
