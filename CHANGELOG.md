@@ -16,3 +16,6 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Add Background color setting
 - Made isolation default stacking context method
 - Add related secondary property if required to create stacking context
+
+## [1.1.1] - 7/23/2024
+- Update changelog
