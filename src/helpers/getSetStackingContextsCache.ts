@@ -14,7 +14,7 @@ export async function getSetStackingContexts(
 ): Promise<any[]> {
   const cacheKey = document.uri.toString();
   let cacheEntry = cache.get(cacheKey);
-  const documentLastModified = document.version; // Assuming 'version' increases with each modification
+  const documentLastModified = document.version;
 
   // Check if cache exists and if document has been modified since last cache
   if (cacheEntry && cacheEntry.lastModified === documentLastModified) {

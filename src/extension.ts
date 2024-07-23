@@ -15,7 +15,7 @@ import { ZIndexDiagnosticsProvider } from './providers/ZIndexDiagnosticsProvider
  * @param context
  */
 export function activate(context: vscode.ExtensionContext) {
-  const cache = new Cache(context, 'betterStackingContextsCache');
+  const cache = new Cache(context, 'betterStackingContextsCacheV1');
   const navigateToPropertyCommand = new NavigateToPropertyCommand();
   const stackingContextsProvider = new StackingContextsProvider([]);
   const decorationsProvider = new StackingContextDecorationProvider(cache);
