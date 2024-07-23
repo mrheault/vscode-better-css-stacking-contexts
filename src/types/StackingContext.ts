@@ -1,8 +1,7 @@
 import { Position } from 'postcss';
 import { Range } from 'vscode';
 export type StackingContext = {
-  start: Position;
-  end: Position;
+  propertyRange: Range;
   selector: string;
   ruleRange: Range;
   property: string;

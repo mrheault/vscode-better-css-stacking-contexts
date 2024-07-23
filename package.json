@@ -62,7 +62,7 @@
         },
         "betterStackingContexts.backgroundColor": {
           "type": "string",
-          "default": "editorInfo.hoverHighlightBackground",
+          "default": "editor.hoverHighlightBackground",
           "description": "Background color used to highlight stacking contexts."
         },
         "betterStackingContexts.messageText": {

@@ -163,10 +163,9 @@ export async function findStackingContexts(
 
           if (node.source?.start && node.source.end) {
             stackingContexts.push({
-              start: node.source.start,
-              end: node.source.end,
+              propertyRange: nodeRange(node),
               selector: rule.selector,
-              ruleRange: new Range(nodeRange(rule).start, nodeRange(rule).end),
+              ruleRange: nodeRange(rule),
               property: node.prop,
               value: node.value,
               relatedProperty,

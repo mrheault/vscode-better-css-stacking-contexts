@@ -5,9 +5,10 @@ import { NavigateToPropertyCommand } from './commands/NavigateToProperty';
 import { getSetStackingContexts } from './helpers/getSetStackingContextsCache';
 import { Logger } from './helpers/logger';
 import { IneffectiveZIndexCodeActionProvider } from './providers/IneffectiveZIndexCodeActionProvider';
-import { StackingContextsAndZIndexProvider } from './providers/StackingContextsAndZIndexProvider';
+import { StackingContextDecorationProvider } from './providers/StackingContextsDecorationProvider';
 import { StackingContextsProvider } from './providers/StackingContextsProvider';
 import { diagnosticsCollection, DOCUMENT_SELECTOR } from './contants/globals';
+import { ZIndexDiagnosticsProvider } from './providers/ZIndexDiagnosticsProvider';
 
 /**
  * Activate the extension
@@ -17,7 +18,8 @@ export function activate(context: vscode.ExtensionContext) {
   const cache = new Cache(context, 'betterStackingContextsCache');
   const navigateToPropertyCommand = new NavigateToPropertyCommand();
   const stackingContextsProvider = new StackingContextsProvider([]);
-  const decorationsProvider = new StackingContextsAndZIndexProvider(cache);
+  const decorationsProvider = new StackingContextDecorationProvider(cache);
+  const zIndexDiagnosticsProvider = new ZIndexDiagnosticsProvider();
 
   /**
    * Register all commands
@@ -86,7 +88,7 @@ export function activate(context: vscode.ExtensionContext) {
     300,
   );
   const debouncedZIndexDiagnostic = lodash.debounce(
-    (document) => decorationsProvider.provideZIndexDiagnostic(document),
+    (document) => zIndexDiagnosticsProvider.provideZIndexDiagnostic(document),
     300,
   );
 
@@ -95,16 +97,8 @@ export function activate(context: vscode.ExtensionContext) {
    * @param e
    */
   function handleConfigChange(e: vscode.ConfigurationChangeEvent) {
-    if (
-      e.affectsConfiguration('betterStackingContexts.decorationColor') ||
-      e.affectsConfiguration('betterStackingContexts.stackingContextMethod') ||
-      e.affectsConfiguration('betterStackingContexts.backgroundColor') ||
-      e.affectsConfiguration('betterStackingContexts.messageText')
-    ) {
-      const editor = vscode.window.activeTextEditor;
-      if (editor) {
-        debouncedUpdateDecorations(editor.document);
-      }
+    if (e.affectsConfiguration('betterStackingContexts')) {
+      decorationsProvider.updateConfigValues();
     }
   }
 

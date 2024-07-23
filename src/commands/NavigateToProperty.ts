@@ -27,9 +27,12 @@ export class NavigateToPropertyCommand {
           editor.viewColumn,
         );
       }
+      const startOffset = editor.document.offsetAt(context.propertyRange.start);
+      const endOffset = editor.document.offsetAt(context.propertyRange.end);
+
       const ranges = new vscode.Range(
-        editor.document.positionAt(context.start.offset),
-        editor.document.positionAt(context.end.offset),
+        editor.document.positionAt(startOffset),
+        editor.document.positionAt(endOffset),
       );
 
       editor.revealRange(ranges, vscode.TextEditorRevealType.InCenter);
