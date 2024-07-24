@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.1.2] - 7/24/2024
+- Add release workflow
+- Remove lodash dependency, only need debounce
+- Update README.md
+- Update package.json
+- Update changelog
+
 ## [1.1.1] - 7/23/2024
 - Update changelog
 
