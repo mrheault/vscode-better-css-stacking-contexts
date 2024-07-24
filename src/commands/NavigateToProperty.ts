@@ -1,16 +1,16 @@
-import lodash from 'lodash';
-import * as vscode from 'vscode';
-import { Logger } from '../helpers/logger';
-import { StackingContext } from '../types/StackingContext';
+import debounce from "lodash.debounce";
+import * as vscode from "vscode";
+import { Logger } from "../helpers/logger";
+import { StackingContext } from "../types/StackingContext";
 
 /**
  * Command to navigate to a CSS property
  */
 export class NavigateToPropertyCommand {
-  private readonly debouncedExecute: ReturnType<typeof lodash.debounce>;
+  private readonly debouncedExecute: ReturnType<typeof debounce>;
 
   constructor() {
-    this.debouncedExecute = lodash.debounce(this.execute.bind(this), 200);
+    this.debouncedExecute = debounce(this.execute.bind(this), 200);
   }
   async execute(documentUri: vscode.Uri, context: StackingContext) {
     try {
@@ -39,7 +39,7 @@ export class NavigateToPropertyCommand {
       editor.selection = new vscode.Selection(ranges.start, ranges.start);
     } catch (e) {
       Logger.error(`Failed to navigate to property: ${(e as Error).message}`);
-      vscode.window.showErrorMessage('Failed to navigate to the CSS property.');
+      vscode.window.showErrorMessage("Failed to navigate to the CSS property.");
     }
   }
   public async executeWrapper(

@@ -1,21 +1,21 @@
-import lodash from 'lodash';
-import * as vscode from 'vscode';
-import Cache from 'vscode-cache';
-import { NavigateToPropertyCommand } from './commands/NavigateToProperty';
-import { getSetStackingContexts } from './helpers/getSetStackingContextsCache';
-import { Logger } from './helpers/logger';
-import { IneffectiveZIndexCodeActionProvider } from './providers/IneffectiveZIndexCodeActionProvider';
-import { StackingContextDecorationProvider } from './providers/StackingContextsDecorationProvider';
-import { StackingContextsProvider } from './providers/StackingContextsProvider';
-import { diagnosticsCollection, DOCUMENT_SELECTOR } from './contants/globals';
-import { ZIndexDiagnosticsProvider } from './providers/ZIndexDiagnosticsProvider';
+import debounce from "lodash.debounce";
+import * as vscode from "vscode";
+import Cache from "vscode-cache";
+import { NavigateToPropertyCommand } from "./commands/NavigateToProperty";
+import { getSetStackingContexts } from "./helpers/getSetStackingContextsCache";
+import { Logger } from "./helpers/logger";
+import { IneffectiveZIndexCodeActionProvider } from "./providers/IneffectiveZIndexCodeActionProvider";
+import { StackingContextDecorationProvider } from "./providers/StackingContextsDecorationProvider";
+import { StackingContextsProvider } from "./providers/StackingContextsProvider";
+import { diagnosticsCollection, DOCUMENT_SELECTOR } from "./contants/globals";
+import { ZIndexDiagnosticsProvider } from "./providers/ZIndexDiagnosticsProvider";
 
 /**
  * Activate the extension
  * @param context
  */
 export function activate(context: vscode.ExtensionContext) {
-  const cache = new Cache(context, 'betterStackingContextsCacheV1');
+  const cache = new Cache(context, "betterStackingContextsCacheV1");
   const navigateToPropertyCommand = new NavigateToPropertyCommand();
   const stackingContextsProvider = new StackingContextsProvider([]);
   const decorationsProvider = new StackingContextDecorationProvider(cache);
@@ -27,11 +27,11 @@ export function activate(context: vscode.ExtensionContext) {
   function registerCommands() {
     context.subscriptions.push(
       vscode.commands.registerCommand(
-        'stackingContexts.refreshView',
+        "stackingContexts.refreshView",
         refreshView,
       ),
       vscode.commands.registerCommand(
-        'stackingContexts.navigateToProperty',
+        "stackingContexts.navigateToProperty",
         navigateToPropertyCommand.execute,
       ),
     );
@@ -42,7 +42,7 @@ export function activate(context: vscode.ExtensionContext) {
    */
   function registerProviders() {
     vscode.window.registerTreeDataProvider(
-      'stackingContextsView',
+      "stackingContextsView",
       stackingContextsProvider,
     );
     context.subscriptions.push(
@@ -82,12 +82,12 @@ export function activate(context: vscode.ExtensionContext) {
     }
   }
 
-  const debouncedUpdateTreeView = lodash.debounce(updateTreeView, 300);
-  const debouncedUpdateDecorations = lodash.debounce(
+  const debouncedUpdateTreeView = debounce(updateTreeView, 300);
+  const debouncedUpdateDecorations = debounce(
     (document) => decorationsProvider.updateDecorations(document),
     300,
   );
-  const debouncedZIndexDiagnostic = lodash.debounce(
+  const debouncedZIndexDiagnostic = debounce(
     (document) => zIndexDiagnosticsProvider.provideZIndexDiagnostic(document),
     300,
   );
@@ -97,7 +97,7 @@ export function activate(context: vscode.ExtensionContext) {
    * @param e
    */
   function handleConfigChange(e: vscode.ConfigurationChangeEvent) {
-    if (e.affectsConfiguration('betterStackingContexts')) {
+    if (e.affectsConfiguration("betterStackingContexts")) {
       decorationsProvider.updateConfigValues();
     }
   }
@@ -127,7 +127,7 @@ export function activate(context: vscode.ExtensionContext) {
    * @param event
    */
   function handleTextDocumentChange(event: vscode.TextDocumentChangeEvent) {
-    if (['css', 'scss'].includes(event.document.languageId)) {
+    if (["css", "scss"].includes(event.document.languageId)) {
       cache.forget(event.document.uri.toString());
       getSetStackingContexts(event.document, cache);
     }
@@ -144,7 +144,7 @@ export function activate(context: vscode.ExtensionContext) {
   async function updateTreeView(document?: vscode.TextDocument) {
     if (
       document &&
-      (document.languageId === 'css' || document.languageId === 'scss')
+      (document.languageId === "css" || document.languageId === "scss")
     ) {
       const stackingContexts = await getSetStackingContexts(document, cache);
       if (stackingContexts) {
@@ -178,7 +178,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(diagnosticsCollection);
 
   Logger.info(
-    'vscode-better-stacking-contexts is now active. Please open a CSS or SCSS file to see the extension in action.',
+    "vscode-better-stacking-contexts is now active. Please open a CSS or SCSS file to see the extension in action.",
   );
 }
 
