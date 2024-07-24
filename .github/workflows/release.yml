@@ -21,10 +21,10 @@ jobs:
         run: npm ci
 
       - name: Test
-        run: npm test
+        run: npm run pretest
 
       - name: Publish
         run: npx @vscode/vsce publish -p ${{ secrets.VSCE_PAT }}
 
       - name: Publish to open-vsx.org
-        run: npx ovsx publish -p ${{ secrets.OPEN_VSX_PAT }} 
+        run: npx ovsx publish -p ${{ secrets.OPEN_VSX_PAT }}
