@@ -1,5 +1,6 @@
-import { Position } from 'postcss';
-import { Range } from 'vscode';
+import { Position } from "postcss";
+import { Range } from "vscode";
+
 export type StackingContext = {
   propertyRange: Range;
   selector: string;

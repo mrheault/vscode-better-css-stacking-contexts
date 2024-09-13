@@ -1,7 +1,7 @@
-import vscode from 'vscode';
-import { StackingContext } from '../types/StackingContext';
-import { findStackingContexts } from './findStackingContexts';
-import { Logger } from './logger';
+import vscode from "vscode";
+import { StackingContext } from "../types/StackingContext";
+import { findStackingContexts } from "./findStackingContexts";
+import { Logger } from "./logger";
 
 /**
  * Get or set stacking contexts in cache
@@ -26,7 +26,7 @@ export async function getSetStackingContexts(
     try {
       stackingContexts = await findStackingContexts(
         document.getText(),
-        document.languageId === 'scss',
+        document.languageId === "scss",
       );
       // Update cache with new stacking contexts and current document version
       await cache.put(cacheKey, {

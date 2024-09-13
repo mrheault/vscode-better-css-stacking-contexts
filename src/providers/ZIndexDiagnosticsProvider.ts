@@ -1,17 +1,20 @@
-import * as vscode from 'vscode';
-import dedent from 'dedent';
-import postcss from 'postcss';
-import scssSyntax from 'postcss-scss';
-import { Uri } from 'vscode';
+import * as vscode from "vscode";
+import dedent from "dedent";
+import postcss from "postcss";
+import scssSyntax from "postcss-scss";
+import { Uri } from "vscode";
 import {
   diagnosticsCollection,
   INEFFECTIVE_Z_INDEX_CODE,
-} from '../contants/globals';
-import { isIneffectiveZIndexDeclaration } from '../helpers/findStackingContexts';
-import { nodeRange } from '../helpers/nodeRange';
-import { Logger } from '../helpers/logger';
+} from "../contants/globals";
+import { isIneffectiveZIndexDeclaration } from "../helpers/findStackingContexts";
+import { nodeRange } from "../helpers/nodeRange";
+import { Logger } from "../helpers/logger";
+import debounce from "lodash.debounce";
 
 export class ZIndexDiagnosticsProvider {
+  private cache: Map<string, vscode.Diagnostic[]> = new Map();
+
   constructor() {
     this.listenForDocumentChanges();
   }
@@ -22,47 +25,43 @@ export class ZIndexDiagnosticsProvider {
     try {
       const text = document.getText();
       const result = await postcss().process(text, {
-        syntax: document.languageId === 'scss' ? scssSyntax : undefined,
+        syntax: document.languageId === "scss" ? scssSyntax : undefined,
       });
 
-      result.root.walkDecls('z-index', (decl) => {
-        if (isIneffectiveZIndexDeclaration(decl)) {
+      const diagnostics: vscode.Diagnostic[] = [];
+      result.root.walkDecls("z-index", (decl) => {
+        const isIneffective = isIneffectiveZIndexDeclaration(decl);
+
+        if (isIneffective) {
           const range = nodeRange(decl);
-          this.addDiagnostic(
-            document,
+          const diagnostic = new vscode.Diagnostic(
             range,
-            dedent`The \`z-index\` value of ${decl.value} is ineffective in this context because the rule does not create a new stacking context.`,
+            dedent`The \`z-index\` value of ${decl.value} is ineffective because the rule does not create a new stacking context.`,
             vscode.DiagnosticSeverity.Warning,
-            INEFFECTIVE_Z_INDEX_CODE,
           );
+          diagnostic.code = INEFFECTIVE_Z_INDEX_CODE;
+          diagnostics.push(diagnostic);
         }
       });
+
+      this.cache.set(document.uri.toString(), diagnostics);
+      diagnosticsCollection.set(document.uri, diagnostics);
     } catch (e) {
       Logger.error(`Error in provideZIndexDiagnostic: ${e}`);
     }
   }
 
   private listenForDocumentChanges(): void {
+    const debouncedUpdate = debounce(
+      (document: vscode.TextDocument) => this.provideZIndexDiagnostic(document),
+      300,
+    );
+
     vscode.workspace.onDidChangeTextDocument(
       (event: vscode.TextDocumentChangeEvent) => {
-        // Clear diagnostics for the edited document
         diagnosticsCollection.delete(event.document.uri);
+        debouncedUpdate(event.document);
       },
     );
-  }
-
-  private addDiagnostic(
-    document: vscode.TextDocument,
-    range: vscode.Range,
-    message: string,
-    severity: vscode.DiagnosticSeverity = vscode.DiagnosticSeverity.Warning,
-    code: string | number | { value: string | number; target: Uri },
-    tags: vscode.DiagnosticTag[] = [],
-  ) {
-    const diagnostic = new vscode.Diagnostic(range, message, severity);
-    diagnostic.source = 'better-stacking-contexts';
-    diagnostic.code = code;
-    diagnostic.tags = tags;
-    diagnosticsCollection.set(document.uri, [diagnostic]);
   }
 }

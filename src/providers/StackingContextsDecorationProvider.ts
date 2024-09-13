@@ -1,7 +1,7 @@
-import * as vscode from 'vscode';
-import dedent from 'dedent';
-import { findStackingContexts } from '../helpers/findStackingContexts';
-import { Logger } from '../helpers/logger';
+import * as vscode from "vscode";
+import dedent from "dedent";
+import { findStackingContexts } from "../helpers/findStackingContexts";
+import { Logger } from "../helpers/logger";
 
 export class StackingContextDecorationProvider {
   private propertyDecorationType: vscode.TextEditorDecorationType =
@@ -17,13 +17,13 @@ export class StackingContextDecorationProvider {
 
   public updateConfigValues(): void {
     const decorationColor =
-      this.getConfigValue<string>('decorationColor') || 'editorInfo.foreground';
+      this.getConfigValue<string>("decorationColor") || "editorInfo.foreground";
     const ruleBackgroundColor =
-      this.getConfigValue<string>('backgroundColor') ||
-      'editor.hoverHighlightBackground';
+      this.getConfigValue<string>("backgroundColor") ||
+      "editor.hoverHighlightBackground";
     const messageText =
-      this.getConfigValue<string>('messageText') ||
-      ' 🤐 This property creates a new stacking context';
+      this.getConfigValue<string>("messageText") ||
+      " 🤐 This property creates a new stacking context";
 
     // Dispose of old decoration types if they exist
     if (this.propertyDecorationType) {
@@ -51,19 +51,19 @@ export class StackingContextDecorationProvider {
 
   private getConfigValue<T>(key: string): T | undefined {
     return vscode.workspace
-      .getConfiguration('betterStackingContexts')
+      .getConfiguration("betterStackingContexts")
       .get<T>(key);
   }
 
   private getColor(colorId: string): string | vscode.ThemeColor {
-    return colorId.startsWith('#') ? colorId : new vscode.ThemeColor(colorId);
+    return colorId.startsWith("#") ? colorId : new vscode.ThemeColor(colorId);
   }
 
   public async updateDecorations(document: vscode.TextDocument): Promise<void> {
     try {
       const stackingContexts = await findStackingContexts(
         document.getText(),
-        document.languageId === 'scss',
+        document.languageId === "scss",
       );
       const propertyRanges = stackingContexts.map(
         (context) => context.propertyRange,

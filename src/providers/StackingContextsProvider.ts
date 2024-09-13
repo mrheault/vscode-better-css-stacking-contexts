@@ -1,7 +1,7 @@
-import * as vscode from 'vscode';
-import { Logger } from '../helpers/logger';
-import { StackingContext } from '../types/StackingContext';
-import { StackingContextItem } from './StackingContextItem';
+import * as vscode from "vscode";
+import { Logger } from "../helpers/logger";
+import { StackingContext } from "../types/StackingContext";
+import { StackingContextItem } from "./StackingContextItem";
 
 /**
  * Provider for Stacking Contexts tree view
@@ -40,7 +40,7 @@ export class StackingContextsProvider
       return Promise.resolve([]);
     } else {
       if (!this.documentUri) {
-        Logger.warning('Document URI is undefined in StackingContextsProvider');
+        Logger.warning("Document URI is undefined in StackingContextsProvider");
         return Promise.resolve([]);
       }
       try {

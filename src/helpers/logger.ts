@@ -1,5 +1,5 @@
-import { OutputChannel, window } from 'vscode';
-import { format } from 'date-fns';
+import { OutputChannel, window } from "vscode";
+import { format } from "date-fns";
 
 /**
  * Logger class
@@ -9,7 +9,7 @@ export class Logger {
   public static channel: OutputChannel | null = null;
 
   private constructor() {
-    const displayName = 'Better Stacking Contexts';
+    const displayName = "Better Stacking Contexts";
     Logger.channel = window.createOutputChannel(displayName);
   }
 
@@ -30,14 +30,14 @@ export class Logger {
    */
   public static info(
     message: string,
-    type: 'INFO' | 'WARNING' | 'ERROR' = 'INFO',
+    type: "INFO" | "WARNING" | "ERROR" = "INFO",
   ): void {
     if (!Logger.channel) {
       Logger.getInstance();
     }
 
     Logger.channel?.appendLine(
-      `["${type}" - ${format(new Date(), 'HH:MM:ss')}]  ${message}`,
+      `["${type}" - ${format(new Date(), "HH:MM:ss")}]  ${message}`,
     );
   }
 
@@ -46,7 +46,7 @@ export class Logger {
    * @param message
    */
   public static warning(message: string): void {
-    Logger.info(message, 'WARNING');
+    Logger.info(message, "WARNING");
   }
 
   /**
@@ -54,6 +54,6 @@ export class Logger {
    * @param message
    */
   public static error(message: string): void {
-    Logger.info(message, 'ERROR');
+    Logger.info(message, "ERROR");
   }
 }

@@ -1,5 +1,5 @@
-import * as vscode from 'vscode';
-import { INEFFECTIVE_Z_INDEX_CODE } from '../contants/globals';
+import * as vscode from "vscode";
+import { INEFFECTIVE_Z_INDEX_CODE } from "../contants/globals";
 
 /**
  * Code action provider for ineffective z-index diagnostics
@@ -43,7 +43,7 @@ export class IneffectiveZIndexCodeActionProvider
     range: vscode.Range,
   ): vscode.CodeAction {
     const fix = new vscode.CodeAction(
-      'Remove ineffective z-index',
+      "Remove ineffective z-index",
       vscode.CodeActionKind.QuickFix,
     );
     fix.edit = new vscode.WorkspaceEdit();
@@ -67,13 +67,13 @@ export class IneffectiveZIndexCodeActionProvider
   ): vscode.CodeAction {
     // Read the user's preferred method from the configuration
     const method = vscode.workspace
-      .getConfiguration('betterStackingContexts')
-      .get<string>('stackingContextMethod');
+      .getConfiguration("betterStackingContexts")
+      .get<string>("stackingContextMethod");
     // Construct the title string based on the user's preference
     const actionTitle =
-      method === 'isolation'
-        ? 'Add stacking context (isolation: isolate)'
-        : 'Add stacking context (position: relative)';
+      method === "isolation"
+        ? "Add stacking context (isolation: isolate)"
+        : "Add stacking context (position: relative)";
 
     const fix = new vscode.CodeAction(
       actionTitle,
@@ -91,7 +91,7 @@ export class IneffectiveZIndexCodeActionProvider
 
     // Determine the declaration based on the user's preference
     const declaration =
-      method === 'isolation' ? 'isolation: isolate;' : 'position: relative;';
+      method === "isolation" ? "isolation: isolate;" : "position: relative;";
     const declarationWithIndentation = `${indentation}${declaration}`;
     const startPosition = new vscode.Position(range.start.line, 0);
     fix.edit.insert(

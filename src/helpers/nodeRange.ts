@@ -1,5 +1,5 @@
-import { Node, Position } from 'postcss';
-import * as vscode from 'vscode';
+import { Node, Position } from "postcss";
+import * as vscode from "vscode";
 
 /**
  * Convert a postcss Position to a vscode Position
@@ -15,7 +15,7 @@ export const convertPosition = (position: Position): vscode.Position => {
  */
 export const nodeRange = (node: Node): vscode.Range => {
   if (!node.source?.start || !node.source.end) {
-    throw new Error('Node has no source position');
+    throw new Error("Node has no source position");
   }
   return new vscode.Range(
     convertPosition(node.source.start),

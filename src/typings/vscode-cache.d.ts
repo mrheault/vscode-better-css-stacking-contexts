@@ -1,1 +1,1 @@
-declare module 'vscode-cache'
+declare module "vscode-cache";
