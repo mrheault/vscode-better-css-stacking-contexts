@@ -60,6 +60,9 @@ export class StackingContextDecorationProvider {
   }
 
   public async updateDecorations(document: vscode.TextDocument): Promise<void> {
+    if (!["css", "scss"].includes(document.languageId)) {
+      return;
+    }
     try {
       const stackingContexts = await findStackingContexts(
         document.getText(),

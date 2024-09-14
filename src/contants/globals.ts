@@ -13,6 +13,10 @@ export const DOCUMENT_SELECTOR: vscode.DocumentSelector = [
  * Code for ineffective z-index
  */
 export const INEFFECTIVE_Z_INDEX_CODE = "ineffective-z-index";
+/**
+ * Code for participates in parent
+ */
+export const PARTICIPATES_IN_PARENT_CODE = "participates-in-parent";
 
 /**
  * Collection of diagnostics

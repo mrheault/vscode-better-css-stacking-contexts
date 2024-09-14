@@ -38,6 +38,40 @@ const nonNoneValues = new Set([
 ]);
 
 /**
+ * Checks if the given z-index declaration is effective within its parent's stacking context.
+ * @param decl - The z-index declaration to analyze.
+ * @returns boolean - True if the z-index participates within the parent's stacking context.
+ */
+export function isInParentStackingContext(decl: Declaration): boolean {
+  // Get the parent rule of the z-index declaration
+  let parent = decl.parent;
+  const scssEdgeCaseRegex = /&(--|::|\[|:|>|\+|~|\*)/;
+
+  // Traverse up the parent chain to find a rule that creates a stacking context
+  while (parent && parent.type === "rule") {
+    const rule = parent as Rule;
+
+    if (scssEdgeCaseRegex.test(rule.selector)) {
+      return false; // Exclude sibling selectors like &--child
+    }
+
+    // Check if the parent rule creates a stacking context
+    if (
+      rule.nodes.some(
+        (node) => isDeclaration(node) && isStackingContextCreatingValue(node),
+      )
+    ) {
+      return true; // The z-index is effective within its parent's stacking context
+    }
+
+    // Move up to the next parent rule
+    parent = rule.parent;
+  }
+
+  return false; // No stacking context found in parent chain
+}
+
+/**
  * Check if a declaration creates a stacking context
  * @param node
  */

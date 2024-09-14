@@ -2,6 +2,8 @@
 
 ## [1.2.0] - 9/13/2024
 - Add more tests
+- Additional error handling
+- Parse parent element for stacking context
 
 ## [1.1.2] - 7/24/2024
 - Add release workflow
