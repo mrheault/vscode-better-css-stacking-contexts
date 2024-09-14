@@ -9,6 +9,7 @@ suite("StackingContextDecorationProvider Tests", () => {
       content: "div { z-index: 1; }",
       language: "css",
     });
+    await vscode.window.showTextDocument(document);
     await provider.updateDecorations(document);
     const activeEditor = vscode.window.activeTextEditor;
     assert.ok(activeEditor);
