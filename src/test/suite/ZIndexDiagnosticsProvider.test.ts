@@ -1,6 +1,5 @@
 import * as assert from "assert";
 import * as vscode from "vscode";
-import { INEFFECTIVE_Z_INDEX_CODE } from "../../contants/globals";
 import { ZIndexDiagnosticsProvider } from "../../providers/ZIndexDiagnosticsProvider";
 
 suite("ZIndexDiagnosticsProvider Tests", () => {

@@ -1,4 +1,3 @@
-import { Position } from "postcss";
 import { Range } from "vscode";
 
 export type StackingContext = {

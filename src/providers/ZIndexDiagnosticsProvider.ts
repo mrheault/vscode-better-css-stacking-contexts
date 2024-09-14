@@ -2,11 +2,9 @@ import * as vscode from "vscode";
 import dedent from "dedent";
 import postcss from "postcss";
 import scssSyntax from "postcss-scss";
-import { Uri } from "vscode";
 import {
   diagnosticsCollection,
   INEFFECTIVE_Z_INDEX_CODE,
-  PARTICIPATES_IN_PARENT_CODE,
 } from "../contants/globals";
 import {
   isIneffectiveZIndexDeclaration,
