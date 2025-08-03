@@ -129,7 +129,7 @@
     "postcss": "^8.4.47",
     "postcss-scss": "^4.0.9",
     "prettier": "^3.3.3",
-    "typescript": "^5.4.5",
+    "typescript": "^5.7.3",
     "vscode-cache": "^0.3.0"
   }
 }
