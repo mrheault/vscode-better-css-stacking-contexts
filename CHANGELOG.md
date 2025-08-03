@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.2.1] - 08/03/2025
+- NPM package bumps
+
 ## [1.2.0] - 9/13/2024
 - Add more tests
 - Additional error handling
