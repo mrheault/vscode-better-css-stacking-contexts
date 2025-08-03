@@ -114,7 +114,7 @@
     "@types/lodash": "^4.17.7",
     "@types/lodash.debounce": "^4.0.9",
     "@types/mocha": "^10.0.9",
-    "@types/node": "20.x",
+    "@types/node": "22.x",
     "@types/vscode": "^1.91.0",
     "@typescript-eslint/eslint-plugin": "^7.14.1",
     "@typescript-eslint/parser": "^7.18.0",
