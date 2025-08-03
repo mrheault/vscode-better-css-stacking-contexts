@@ -17,6 +17,9 @@ jobs:
           node-version: 20
           registry-url: https://registry.npmjs.org/
 
+      - name: Clear cache
+        run: rm -rf node_modules package-lock.json
+
       - name: Install the dependencies
         run: npm ci
 
