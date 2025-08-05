@@ -1,0 +1,166 @@
+# VS Code Extension Development Rules
+
+## Project Overview
+
+This is a VS Code extension for better CSS stacking contexts visualization and analysis. The extension helps developers understand and debug CSS stacking contexts by providing visual indicators, diagnostics, and navigation tools.
+
+## Code Style & Standards
+
+### TypeScript
+
+- Use strict TypeScript configuration
+- Prefer explicit types over `any`
+- Use interfaces for object shapes
+- Use enums for constants
+- Use readonly properties where appropriate
+- Use optional chaining and nullish coalescing
+- Prefer const assertions for literal types
+
+### Naming Conventions
+
+- Use PascalCase for classes, interfaces, and types
+- Use camelCase for variables, functions, and methods
+- Use UPPER_SNAKE_CASE for constants
+- Use descriptive names that explain intent
+- Prefix private methods with underscore if needed
+
+### File Organization
+
+- Keep files focused on single responsibility
+- Use barrel exports (index.ts) for clean imports
+- Group related functionality in directories
+- Separate concerns: providers, commands, helpers, types
+
+### VS Code Extension Patterns
+
+- Use the VS Code extension API properly
+- Implement proper disposal patterns for resources
+- Use event-driven architecture where appropriate
+- Follow VS Code's command and provider patterns
+- Use proper error handling and logging
+
+## Architecture Guidelines
+
+### Providers
+
+- Each provider should have a single responsibility
+- Implement proper dispose methods
+- Use caching where appropriate for performance
+- Handle VS Code lifecycle events properly
+
+### Commands
+
+- Keep commands focused and simple
+- Use proper argument validation
+- Provide meaningful error messages
+- Follow VS Code command patterns
+
+### Helpers
+
+- Create pure functions where possible
+- Use proper error handling
+- Add JSDoc comments for complex functions
+- Keep helper functions small and focused
+
+## Testing
+
+- Write unit tests for all public functions
+- Test edge cases and error conditions
+- Use descriptive test names
+- Mock VS Code API calls in tests
+- Test both success and failure scenarios
+
+## Performance
+
+- Cache expensive operations
+- Use debouncing for user interactions
+- Minimize DOM queries and updates
+- Use efficient data structures
+- Profile performance-critical code
+
+## Error Handling
+
+- Use try-catch blocks appropriately
+- Log errors with context
+- Provide user-friendly error messages
+- Handle VS Code API errors gracefully
+- Use proper error types
+
+## Documentation
+
+- Add JSDoc comments for public APIs
+- Document complex algorithms
+- Keep README up to date
+- Document configuration options
+- Add inline comments for complex logic
+
+## CSS/SCSS Specific
+
+- Follow BEM naming conventions
+- Use CSS custom properties for theming
+- Ensure proper stacking context handling
+- Test in both light and dark themes
+- Use semantic class names
+
+## Git & Version Control
+
+- Write descriptive commit messages
+- Use conventional commits format
+- Keep commits focused and atomic
+- Update CHANGELOG.md for user-facing changes
+- Tag releases appropriately
+
+## Extension Development Best Practices
+
+- Follow VS Code extension guidelines
+- Use proper activation events
+- Implement proper contribution points
+- Handle workspace and file changes
+- Provide meaningful user feedback
+- Support both light and dark themes
+- Test across different VS Code versions
+
+## Code Quality
+
+- Use ESLint for code quality
+- Use Prettier for formatting
+- Fix all linting errors
+- Use meaningful variable names
+- Avoid code duplication
+- Keep functions small and focused
+- Use early returns to reduce nesting
+
+## Security
+
+- Validate all user inputs
+- Sanitize data before display
+- Use proper file path handling
+- Avoid eval() and similar functions
+- Follow VS Code security guidelines
+
+## Accessibility
+
+- Provide keyboard navigation
+- Use semantic HTML where applicable
+- Ensure proper color contrast
+- Add ARIA labels where needed
+- Test with screen readers
+
+## Internationalization
+
+- Use VS Code's localization system
+- Externalize user-facing strings
+- Support multiple languages
+- Use proper date/time formatting
+- Consider cultural differences
+
+## Performance Monitoring
+
+- Monitor extension activation time
+- Track memory usage
+- Profile expensive operations
+- Use VS Code's built-in profiling tools
+- Optimize based on real usage data
+
+- Use VS Code's built-in profiling tools
+- Optimize based on real usage data
